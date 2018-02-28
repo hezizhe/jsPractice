@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lv.dao.piece.PieceMapper">
+
+	<insert id="addPiece" parameterType="piece">
+		insert into piece(power,camp,round) values(#{power},#{camp},#{round})
+	</insert>
+	
+	<select id="getPiece" parameterType="piece" resultType="piece">
+		select * from piece 
+		<where>
+			<if test="locationX !=null"> and locationX = #{locationX} </if>
+			<if test="locationY !=null"> and locationY = #{locationY} </if>
+			<if test="round !=null"> and round = #{round} </if>
+			<if test="id !=null"> and id = #{id} </if>
+		</where>
+	</select>
+	
+	<select id="getRoundPieces" parameterType="piece" resultType="piece">
+		select * from piece where round = #{round} 
+	</select>
+	
+	<select id="getCampPiecesCount" parameterType="piece" resultType="int">
+		select count(1) from piece where camp = #{camp} and round = #{round} 
+	</select>
+	
+	<select id="getRoundPiecesCount" parameterType="piece" resultType="int">
+		select count(1) from piece where round = #{round} 
+	</select>
+	
+	<delete id="delteRoundPieces" parameterType="piece">
+		delete from piece where round = #{round} 
+	</delete>
+	
+	<delete id="deletePiece" parameterType="piece">
+		delete from piece where id = #{id} 
+	</delete>
+	
+	<update id="updatePiece" parameterType="piece">
+		update piece 
+		<set>
+			<if test="hide !=null"> hide = #{hide}, </if>
+			<if test="locationY !=null"> locationY = #{locationY}, </if>
+			<if test="locationX !=null"> locationX = #{locationX}, </if>
+		</set>
+		where id = #{id};
+	</update>
+	
+</mapper>

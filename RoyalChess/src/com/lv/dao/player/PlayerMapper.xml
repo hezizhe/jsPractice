@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lv.dao.player.PlayerMapper">
+	<select id="getPlayer" parameterType="player" resultType="player">
+		select * from player 
+		<where>
+			<if test="playerName !=null"> and playerName = #{playerName} </if>
+			<if test="password !=null"> and password = #{password} </if>
+			<if test="id !=null"> and id = #{id} </if>
+		</where> 
+	</select>
+	
+	<insert id="addPlayer" parameterType="player">
+		insert into player(playerName,password) values(#{playerName},#{password})
+	</insert>
+	
+	<update id="updatePlayer" parameterType="player">
+		update player 
+		<set>
+			<if test="playerName !=null"> playerName = #{playerName}, </if>
+			<if test="password !=null"> password = #{password}, </if>
+			<if test="camp !=null"> camp = #{camp}, </if>
+			<if test="round !=null"> round = #{round}, </if>
+			<if test="overTimes !=null"> overTimes = #{overTimes} </if>
+		</set>
+		where id = #{id};
+	</update>
+	
+</mapper>

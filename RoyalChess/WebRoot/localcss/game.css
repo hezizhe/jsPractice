@@ -1,0 +1,33 @@
+*{
+	margin:0;
+	padding:0;
+}
+ul{
+	float:left;
+}
+ul li{
+	width:100px;
+	height:100px;
+	list-style:none;
+	background-repeat:no-repeat;
+	background-position:center;
+}
+.unknown{background-image:url(/localimg/unknown.png);}
+.ch0-1{background-image:url(/localimg/red1.png);}
+.ch0-2{background-image:url(/localimg/red2.png);}
+.ch0-3{background-image:url(/localimg/red3.png);}
+.ch0-4{background-image:url(/localimg/red4.png);}
+.ch0-5{background-image:url(/localimg/red5.png);}
+.ch0-6{background-image:url(/localimg/red6.png);}
+.ch1-1{background-image:url(/localimg/blue1.png);}
+.ch1-2{background-image:url(/localimg/blue2.png);}
+.ch1-3{background-image:url(/localimg/blue3.png);}
+.ch1-4{background-image:url(/localimg/blue4.png);}
+.ch1-5{background-image:url(/localimg/blue5.png);}
+.ch1-6{background-image:url(/localimg/blue6.png);}
+input{
+	font-size:24px;
+	font-weight:bold;
+	margin-top:10px;
+	height:50px;
+}

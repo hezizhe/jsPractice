@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>24点</title>
+<script type="text/javascript">
+function tofen(num){
+	return num+"/1";
+}
+function getfenzifenmu(num1,num2){
+	var fen1 = num1.split('/');
+	var fen2 = num2.split('/');
+	var fens = [ parseInt(fen1[0]), parseInt(fen1[1]), parseInt(fen2[0]), parseInt(fen2[1]) ];
+	return fens;
+}
+function jia(num1,num2){
+	var fens = getfenzifenmu(num1,num2);
+	var fenzi = fens[0]*fens[3] + fens[2]*fens[1];
+	var fenmu = fens[1] * fens[3];
+	return fenzi+'/'+fenmu;
+}
+function jian(num1,num2){
+	var fens = getfenzifenmu(num1,num2);
+	var fenzi = fens[0]*fens[3] - fens[2]*fens[1];
+	var fenmu = fens[1] * fens[3];
+	return fenzi+'/'+fenmu;
+}
+function cheng(num1,num2){
+	var fens = getfenzifenmu(num1,num2);
+	var fenzi = fens[0] * fens[2];
+	var fenmu = fens[1] * fens[3];
+	return fenzi+'/'+fenmu;
+}
+function chu(num1,num2){
+	var fens = getfenzifenmu(num1,num2);
+	var fenzi = fens[0] * fens[3];
+	var fenmu = fens[1] * fens[2];
+	return fenzi+'/'+fenmu;
+}
+function getresult(num1,num2,i){
+	var result;
+	switch(i){
+		case 1:
+			result = jia(num1,num2);
+			break;
+		case 2:
+			result = jian(num1,num2);
+			break;
+		case 3:
+			result = jian(num2,num1);
+			break;
+		case 4:
+			result = cheng(num1,num2);
+			break;
+		case 5:
+			result = chu(num1,num2);
+			break;
+		case 6:
+			result = chu(num2,num1);
+			break;
+	}
+	return result;
+}
+function getway(af,bf,cf,df){
+	var a = tofen(af); var b = tofen(bf); var c = tofen(cf); var d = tofen(df);
+	for(var i=1;i<7;i++){
+		var result1 = getresult(a,b,i);
+		for(var j=1;j<7;j++){
+			var result2 = getresult(result1,c,j);
+			for(var k=1;k<7;k++){
+				var result3 = getresult(result2,d,k);
+				var results = result3.split('/');
+				if(parseInt(results[0])/parseInt(results[1]) == 24 && parseInt(results[0])%parseInt(results[1]) == 0){
+					var yunsuan1; var yunsuan2; var yunsuan3;
+					switch(i){
+						case 1:
+							yunsuan1=af+'+'+bf;
+							break;
+						case 2:
+							yunsuan1=af+'-'+bf;
+							break;
+						case 3:
+							yunsuan1=bf+'-'+af;
+							break;
+						case 4:
+							yunsuan1=af+'*'+bf;
+							break;
+						case 5:
+							yunsuan1=af+'/'+bf;
+							break;
+						case 6:
+							yunsuan1=bf+'/'+af;
+							break;
+					}
+					if(i<4 && j>3 || j==3 || j==6){
+						var newr = '('+yunsuan1+')';
+						yunsuan1 = newr;
+					}
+					switch(j){
+						case 1:
+							yunsuan2=yunsuan1+'+'+cf;
+							break;
+						case 2:
+							yunsuan2=yunsuan1+'-'+cf;
+							break;
+						case 3:
+							yunsuan2=cf+'-'+yunsuan1;
+							break;
+						case 4:
+							yunsuan2=yunsuan1+'*'+cf;
+							break;
+						case 5:
+							yunsuan2=yunsuan1+'/'+cf;
+							break;
+						case 6:
+							yunsuan2=cf+'/'+yunsuan1;
+							break;
+					}
+					if(j<4 && k>3 || k==3 || k==6){
+						var newr = '('+yunsuan2+')';
+						yunsuan2 = newr;
+					}
+					switch(k){
+						case 1:
+							yunsuan3=yunsuan2+'+'+df;
+							break;
+						case 2:
+							yunsuan3=yunsuan2+'-'+df;
+							break;
+						case 3:
+							yunsuan3=df+'-'+yunsuan2;
+							break;
+						case 4:
+							yunsuan3=yunsuan2+'*'+df;
+							break;
+						case 5:
+							yunsuan3=yunsuan2+'/'+df;
+							break;
+						case 6:
+							yunsuan3=df+'/'+yunsuan2;
+							break;
+					}
+					yunsuan3+= '='+eval(yunsuan3);
+					document.getElementById('result').innerHTML+='<br/>'+yunsuan3;
+				}
+			}
+		}
+		for(var j=1;j<7;j++){
+			var result2 = getresult(c,d,j);
+			for(var k=1;k<7;k++){
+				var result3 = getresult(result1,result2,k);
+				var results = result3.split('/');
+				if(parseInt(results[0])/parseInt(results[1]) == 24 && parseInt(results[0])%parseInt(results[1]) == 0){
+					var yunsuan1; var yunsuan2; var yunsuan3;
+					switch(i){
+						case 1:
+							yunsuan1=af+'+'+bf;
+							break;
+						case 2:
+							yunsuan1=af+'-'+bf;
+							break;
+						case 3:
+							yunsuan1=bf+'-'+af;
+							break;
+						case 4:
+							yunsuan1=af+'*'+bf;
+							break;
+						case 5:
+							yunsuan1=af+'/'+bf;
+							break;
+						case 6:
+							yunsuan1=bf+'/'+af;
+							break;
+					}
+					if(k>=2){
+						var newr = '('+yunsuan1+')';
+						yunsuan1 = newr;
+					}
+					switch(j){
+						case 1:
+							yunsuan2=cf+'+'+df;
+							break;
+						case 2:
+							yunsuan2=cf+'-'+df;
+							break;
+						case 3:
+							yunsuan2=df+'-'+cf;
+							break;
+						case 4:
+							yunsuan2=cf+'*'+df;
+							break;
+						case 5:
+							yunsuan2=cf+'/'+df;
+							break;
+						case 6:
+							yunsuan2=df+'/'+cf;
+							break;
+					}
+					if(k>=2){
+						var newr = '('+yunsuan2+')';
+						yunsuan2 = newr;
+					}
+					switch(k){
+						case 1:
+							yunsuan3=yunsuan1+'+'+yunsuan2;
+							break;
+						case 2:
+							yunsuan3=yunsuan1+'-'+yunsuan2;
+							break;
+						case 3:
+							yunsuan3=yunsuan2+'-'+yunsuan1;
+							break;
+						case 4:
+							yunsuan3=yunsuan1+'*'+yunsuan2;
+							break;
+						case 5:
+							yunsuan3=yunsuan1+'/'+yunsuan2;
+							break;
+						case 6:
+							yunsuan3=yunsuan2+'/'+yunsuan1;
+							break;
+					}
+					yunsuan3+= '='+eval(yunsuan3);
+					document.getElementById('result').innerHTML+='<br/>'+yunsuan3;
+				}
+			}
+		}
+	}
+}
+function getanswer(a,b,c,d){
+	getway(a,b,c,d); getway(a,b,d,c);
+	getway(a,c,b,d); getway(a,c,d,b);
+	getway(a,d,b,c); getway(a,d,c,b);
+	getway(b,c,a,d); getway(b,c,d,a);
+	getway(b,d,c,a); getway(b,d,a,c);
+	getway(c,d,a,b); getway(c,d,b,a);
+}
+</script>
+</head>
+
+<body>
+<input type="button" value="答案" id="ans" onClick="getanswer(6,8,9,3)"/>
+<div id="result"></div>
+</body>
+</html>

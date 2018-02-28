@@ -1,0 +1,2647 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>贪吃蛇</title>
+<style type="text/css">
+*{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+ul{
+	float:left;
+}
+ul li{
+	width:10px;
+	height:10px;
+}
+.snack{
+	background-color:#333;
+	border-radius:6px;
+}
+.snack2{
+	background-color:#093;
+	border-radius:6px;
+}
+.food{
+	background-color:#F00;
+	border-radius:6px;
+}
+.death{
+	background-color:#999;
+	border-radius:6px;
+}
+.way{
+	width:40px;
+	height:40px;
+	font-size:24px;
+	font-weight:bold;
+	margin-top:3px;
+}
+.bt{
+	width:80px;
+	height:35px;
+	font-size:24px;
+	font-weight:bold;
+	margin-top:5px;
+}
+.speedbt{
+	width:70px;
+	height:28px;
+	font-size:18px;
+	font-weight:bold;
+	margin-top:5px;
+}
+.scoreshow{
+	width:200px;
+	text-align:center;
+	height:40px;
+	line-height:50px;
+	font-size:24px;
+	font-weight:bold;
+}
+#score{
+	font-size:36px;
+}
+#score2{
+	font-size:36px;
+	color:#093;
+}
+</style>
+<script type="text/javascript">
+var headt=10;
+var headh=10;
+var headt2=30;
+var headh2=30;
+var speed=400;
+var speed2=400;
+var moveway="up";
+var moveway2="up";
+var foodt;
+var foodh;
+var bodyt=[]; var bodyh=[];
+var bodyt2=[]; var bodyh2=[];
+var deatht=[]; var deathh=[];
+var deatht2=[]; var deathh2=[];
+var mup; var mdown; var mleft; var mright;
+var mup2; var mdown2; var mleft2; var mright2;
+var growup=false;
+var growup2=false;
+function $(t,h){
+	return document.getElementById("t"+t+"h"+h);
+}
+function gameover(){
+	clearway();
+	$(headt,headh).className="";
+	if(bodyt.length>=1){
+		for(var i=0;i<bodyt.length;i++){
+			var l=deatht.length;
+			deatht[l]=bodyt[i];
+			deathh[l]=bodyh[i];
+			$(bodyt[i],bodyh[i]).className="death";
+		}
+	}
+	bodyt.splice(0,bodyt.length);
+	bodyh.splice(0,bodyh.length);
+	var flag=false;
+	do{
+		headt=Math.floor(Math.random()*40)+1;
+		headh=Math.floor(Math.random()*40)+1;
+		if($(headt,headh).className==""){
+			flag=true;
+			$(headt,headh).className="snack";
+		}
+	}while(!flag);
+	moveway="stop";
+	document.getElementById("score").innerHTML="00";
+	document.getElementById("point").innerHTML="按下任意方向键可复活！";
+	window.setTimeout("document.getElementById('point').innerHTML=''",5000);
+}
+function gameover2(){
+	clearway2();
+	$(headt2,headh2).className="";
+	if(bodyt2.length>=1){
+		for(var i=0;i<bodyt2.length;i++){
+			var l=deatht2.length;
+			deatht2[l]=bodyt2[i];
+			deathh2[l]=bodyh2[i];
+			$(bodyt2[i],bodyh2[i]).className="death";
+		}
+	}
+	bodyt2.splice(0,bodyt2.length);
+	bodyh2.splice(0,bodyh2.length);
+	var flag=false;
+	do{
+		headt2=Math.floor(Math.random()*40)+1;
+		headh2=Math.floor(Math.random()*40)+1;
+		if($(headt2,headh2).className==""){
+			flag=true;
+			$(headt2,headh2).className="snack2";
+		}
+	}while(!flag);
+	moveway2="stop";
+	document.getElementById("score2").innerHTML="00";
+	document.getElementById("point").innerHTML="按下任意方向键可复活！";
+	window.setTimeout("document.getElementById('point').innerHTML=''",5000);
+}
+function clearway(){
+	if(mup!=undefined){
+		window.clearInterval(mup);
+	}
+	if(mdown!=undefined){
+		window.clearInterval(mdown);
+	}
+	if(mleft!=undefined){
+		window.clearInterval(mleft);
+	}
+	if(mright!=undefined){
+		window.clearInterval(mright);
+	}
+}
+function clearway2(){
+	if(mup2!=undefined){
+		window.clearInterval(mup2);
+	}
+	if(mdown2!=undefined){
+		window.clearInterval(mdown2);
+	}
+	if(mleft2!=undefined){
+		window.clearInterval(mleft2);
+	}
+	if(mright2!=undefined){
+		window.clearInterval(mright2);
+	}
+}
+function eatself(){
+	if(headt==headt2 && headh==headh2){
+		gameover();
+	}
+	if(bodyt.length>=1){
+		for(var i=0;i<bodyt.length;i++){
+			if(bodyt[i]==headt && bodyh[i]==headh){
+				gameover();
+			}
+		}
+	}
+	if(bodyt2.length>=1){
+		for(var i=0;i<bodyt2.length;i++){
+			if(bodyt2[i]==headt && bodyh2[i]==headh){
+				gameover();
+			}
+		}
+	}
+}
+function eatself2(){
+	if(headt==headt2 && headh==headh2){
+		gameover2();
+	}
+	if(bodyt.length>=1){
+		for(var i=0;i<bodyt.length;i++){
+			if(bodyt[i]==headt2 && bodyh[i]==headh2){
+				gameover2();
+			}
+		}
+	}
+	if(bodyt2.length>=1){
+		for(var i=0;i<bodyt2.length;i++){
+			if(bodyt2[i]==headt2 && bodyh2[i]==headh2){
+				gameover2();
+			}
+		}
+	}
+}
+function bodymove(){
+	if(bodyt.length>1){
+		if(growup){
+			growup=false;
+		}else{
+			$(bodyt[(bodyt.length-1)],bodyh[(bodyh.length-1)]).className="";
+		}
+		for(var i=bodyt.length-1;i>=1;i--){
+			bodyt[i]=bodyt[i-1];
+			bodyh[i]=bodyh[i-1];
+			$(bodyt[i],bodyh[i]).className="snack";
+		}
+		bodyt[0]=headt;
+		bodyh[0]=headh;
+		$(bodyt[0],bodyh[0]).className="snack";
+	}
+	if(bodyt.length==1){
+		if(growup){
+			growup=false;
+		}else{
+			$(bodyt[0],bodyh[0]).className="";
+		}
+		bodyt[0]=headt;
+		bodyh[0]=headh;
+		$(bodyt[0],bodyh[0]).className="snack";
+	}
+	if(bodyt.length==0){
+		$(headt,headh).className="";
+	}
+}
+function bodymove2(){
+	if(bodyt2.length>1){
+		if(growup2){
+			growup2=false;
+		}else{
+			$(bodyt2[(bodyt2.length-1)],bodyh2[(bodyh2.length-1)]).className="";
+		}
+		for(var i=bodyt2.length-1;i>=1;i--){
+			bodyt2[i]=bodyt2[i-1];
+			bodyh2[i]=bodyh2[i-1];
+			$(bodyt2[i],bodyh2[i]).className="snack2";
+		}
+		bodyt2[0]=headt2;
+		bodyh2[0]=headh2;
+		$(bodyt2[0],bodyh2[0]).className="snack2";
+	}
+	if(bodyt2.length==1){
+		if(growup2){
+			growup2=false;
+		}else{
+			$(bodyt2[0],bodyh2[0]).className="";
+		}
+		bodyt2[0]=headt2;
+		bodyh2[0]=headh2;
+		$(bodyt2[0],bodyh2[0]).className="snack2";
+	}
+	if(bodyt2.length==0){
+		$(headt2,headh2).className="";
+	}
+}
+function up(){
+	if(headh>1){
+		bodymove();
+		headh-=1;
+		$(headt,headh).className="snack";
+		eat();
+		eatself();
+	}else{
+		gameover();
+	}
+}
+function up2(){
+	if(headh2>1){
+		bodymove2();
+		headh2-=1;
+		$(headt2,headh2).className="snack2";
+		eat2();
+		eatself2();
+	}else{
+		gameover2();
+	}
+}
+function moveup(){
+	if(moveway=="left" || moveway=="right" || moveway=="stop"){
+		clearway();
+		mup=setInterval("up()",speed);
+		window.setTimeout("moveway='up'",speed);
+	}
+}
+function moveup2(){
+	if(moveway2=="left" || moveway2=="right" || moveway2=="stop"){
+		clearway2();
+		mup2=setInterval("up2()",speed2);
+		window.setTimeout("moveway2='up'",speed2);
+	}
+}
+function down(){
+	if(headh<40){
+		bodymove();
+		headh+=1;
+		$(headt,headh).className="snack";
+		eat();
+		eatself();
+	}else{
+		gameover();
+	}
+}
+function down2(){
+	if(headh2<40){
+		bodymove2();
+		headh2+=1;
+		$(headt2,headh2).className="snack2";
+		eat2();
+		eatself2();
+	}else{
+		gameover2();
+	}
+}
+function movedown(){
+	if(moveway=="left" || moveway=="right" || moveway=="stop"){
+		clearway();
+		mdown=setInterval("down()",speed);
+		window.setTimeout("moveway='down'",speed);
+	}
+}
+function movedown2(){
+	if(moveway2=="left" || moveway2=="right" || moveway2=="stop"){
+		clearway2();
+		mdown2=setInterval("down2()",speed2);
+		window.setTimeout("moveway2='down'",speed2);
+	}
+}
+function left(){
+	if(headt>1){
+		bodymove();
+		headt-=1;
+		$(headt,headh).className="snack";
+		eat();
+		eatself();
+	}else{
+		gameover();
+	}
+}
+function left2(){
+	if(headt2>1){
+		bodymove2();
+		headt2-=1;
+		$(headt2,headh2).className="snack2";
+		eat2();
+		eatself2();
+	}else{
+		gameover2();
+	}
+}
+function moveleft(){
+	if(moveway=="up" || moveway=="down" || moveway=="stop"){
+		clearway();
+		mleft=setInterval("left()",speed);
+		window.setTimeout("moveway='left'",speed);
+	}
+}
+function moveleft2(){
+	if(moveway2=="up" || moveway2=="down" || moveway2=="stop"){
+		clearway2();
+		mleft2=setInterval("left2()",speed2);
+		window.setTimeout("moveway2='left'",speed2);
+	}
+}
+function right(){
+	if(headt<40){
+		bodymove();
+		headt+=1;
+		$(headt,headh).className="snack";
+		eat();
+		eatself();
+	}else{
+		gameover();
+	}
+}
+function right2(){
+	if(headt2<40){
+		bodymove2();
+		headt2+=1;
+		$(headt2,headh2).className="snack2";
+		eat2();
+		eatself2();
+	}else{
+		gameover2();
+	}
+}
+function moveright(){
+	if(moveway=="up" || moveway=="down" || moveway=="stop"){
+		clearway();
+		mright=setInterval("right()",speed);
+		window.setTimeout("moveway='right'",speed);
+	}
+}
+function moveright2(){
+	if(moveway2=="up" || moveway2=="down" || moveway2=="stop"){
+		clearway2();
+		mright2=setInterval("right2()",speed2);
+		window.setTimeout("moveway2='right'",speed2);
+	}
+}
+function makefood(){
+	var flag=false;
+	do{
+		foodt=Math.floor(Math.random()*40)+1;
+		foodh=Math.floor(Math.random()*40)+1;
+		if($(foodt,foodh).className==""){
+			flag=true;
+			$(foodt,foodh).className="food";
+		}
+	}while(!flag);
+}
+function eat(){
+	if(foodt==headt && foodh==headh){
+		growup=true;
+		var i=bodyt.length;
+		bodyt[i]=0;
+		bodyh[i]=0;
+		makefood();
+		if(bodyt.length<10){
+			document.getElementById("score").innerHTML="0"+bodyt.length;
+		}else{
+			document.getElementById("score").innerHTML=bodyt.length;
+		}
+	}
+	for(var j=0;j<deatht.length;j++){
+		if(deatht[j]==headt && deathh[j]==headh){
+			delete deatht[j];
+			delete deathh[j];
+			growup=true;
+			var i=bodyt.length;
+			bodyt[i]=0;
+			bodyh[i]=0;
+			if(bodyt.length<10){
+				document.getElementById("score").innerHTML="0"+bodyt.length;
+			}else{
+				document.getElementById("score").innerHTML=bodyt.length;
+			}
+		}
+	}
+	for(var j=0;j<deatht2.length;j++){
+		if(deatht2[j]==headt && deathh2[j]==headh){
+			delete deatht2[j];
+			delete deathh2[j];
+			growup=true;
+			var i=bodyt.length;
+			bodyt[i]=0;
+			bodyh[i]=0;
+			if(bodyt.length<10){
+				document.getElementById("score").innerHTML="0"+bodyt.length;
+			}else{
+				document.getElementById("score").innerHTML=bodyt.length;
+			}
+		}
+	}
+}
+function eat2(){
+	if(foodt==headt2 && foodh==headh2){
+		growup2=true;
+		var i=bodyt2.length;
+		bodyt2[i]=0;
+		bodyh2[i]=0;
+		makefood();
+		if(bodyt2.length<10){
+			document.getElementById("score2").innerHTML="0"+bodyt2.length;
+		}else{
+			document.getElementById("score2").innerHTML=bodyt2.length;
+		}
+	}
+	for(var j=0;j<deatht.length;j++){
+		if(deatht[j]==headt2 && deathh[j]==headh2){
+			delete deatht[j];
+			delete deathh[j];
+			growup2=true;
+			var i=bodyt2.length;
+			bodyt2[i]=0;
+			bodyh2[i]=0;
+			if(bodyt2.length<10){
+				document.getElementById("score2").innerHTML="0"+bodyt2.length;
+			}else{
+				document.getElementById("score2").innerHTML=bodyt2.length;
+			}
+		}
+	}
+	for(var j=0;j<deatht2.length;j++){
+		if(deatht2[j]==headt2 && deathh2[j]==headh2){
+			delete deatht2[j];
+			delete deathh2[j];
+			growup2=true;
+			var i=bodyt2.length;
+			bodyt2[i]=0;
+			bodyh2[i]=0;
+			if(bodyt2.length<10){
+				document.getElementById("score2").innerHTML="0"+bodyt2.length;
+			}else{
+				document.getElementById("score2").innerHTML=bodyt2.length;
+			}
+		}
+	}
+}
+function fast(){
+	if(speed>100){
+		speed-=100;
+	}
+	var showspeed=(Math.abs(600-speed))/100
+	document.getElementById("speed").innerHTML=showspeed;
+}
+function fast2(){
+	if(speed2>100){
+		speed2-=100;
+	}
+	var showspeed2=(Math.abs(600-speed2))/100
+	document.getElementById("speed2").innerHTML=showspeed2;
+}
+function slow(){
+	if(speed<500){
+		speed+=100;
+	}
+	var showspeed=(Math.abs(600-speed))/100
+	document.getElementById("speed").innerHTML=showspeed;
+}
+function slow2(){
+	if(speed2<500){
+		speed2+=100;
+	}
+	var showspeed2=(Math.abs(600-speed2))/100
+	document.getElementById("speed2").innerHTML=showspeed2;
+}
+function moveauto(){
+	var saferight=true; var safeleft=true; var safeup=true; var safedown=true;
+	for(var i=0;i<bodyt.length;i++){
+		if(bodyt[i]==headt+1 && bodyh[i]==headh){
+			saferight=false;
+		}
+		if(bodyt[i]==headt && bodyh[i]==headh-1){
+			safeup=false;
+		}
+		if(bodyt[i]==headt && bodyh[i]==headh+1){
+			safedown=false;
+		}
+		if(bodyt[i]==headt-1 && bodyh[i]==headh){
+			safeleft=false;
+		}
+	}
+	for(var i=0;i<bodyt2.length;i++){
+		if(bodyt2[i]==headt+1 && bodyh2[i]==headh){
+			saferight=false;
+		}
+		if(bodyt2[i]==headt && bodyh2[i]==headh-1){
+			safeup=false;
+		}
+		if(bodyt2[i]==headt && bodyh2[i]==headh+1){
+			safedown=false;
+		}
+		if(bodyt2[i]==headt-1 && bodyh2[i]==headh){
+			safeleft=false;
+		}
+	}
+	if(headt2==headt+1 && headh2==headh){
+		saferight=false;
+	}
+	if(headt2==headt && headh2==headh-1){
+		safeup=false;
+	}
+	if(headt2==headt && headh2==headh+1){
+		safedown=false;
+	}
+	if(headt2==headt-1 && headh2==headh){
+		safeleft=false;
+	}
+	if(headt==40){
+		saferight=false;
+	}
+	if(headt==1){
+		safeleft=false;
+	}
+	if(headh==40){
+		safedown=false;
+	}
+	if(headh==1){
+		safeup=false;
+	}
+	if(foodt-headt>0){
+		if(saferight){
+			right();
+		}else if(safeup){
+			up();
+		}else if(safedown){
+			down();
+		}else if(safeleft){
+			left();
+		}else{
+			gameover();
+		}
+	}else if(foodt-headt==0){
+		if(foodh-headh>0){
+			if(safedown){
+				down();
+			}else if(safeleft){
+				left();
+			}else if(saferight){
+				right();
+			}else if(safeup){
+				up();
+			}else{
+				gameover();
+			}
+		}else if(foodh-headh<0){
+			if(safeup){
+				up();
+			}else if(safeleft){
+				left();
+			}else if(saferight){
+				right();
+			}else if(safedown){
+				down();
+			}else{
+				gameover();
+			}
+		}
+	}else{
+		if(safeleft){
+			left();
+		}else if(safeup){
+			up();
+		}else if(safedown){
+			down();
+		}else if(saferight){
+			right();
+		}else{
+			gameover();
+		}
+	}
+}
+function moveauto2(){
+	var saferight=true; var safeleft=true; var safeup=true; var safedown=true;
+	for(var i=0;i<bodyt.length;i++){
+		if(bodyt[i]==headt2+1 && bodyh[i]==headh2){
+			saferight=false;
+		}
+		if(bodyt[i]==headt2 && bodyh[i]==headh2-1){
+			safeup=false;
+		}
+		if(bodyt[i]==headt2 && bodyh[i]==headh2+1){
+			safedown=false;
+		}
+		if(bodyt[i]==headt2-1 && bodyh[i]==headh2){
+			safeleft=false;
+		}
+	}
+	for(var i=0;i<bodyt2.length;i++){
+		if(bodyt2[i]==headt2+1 && bodyh2[i]==headh2){
+			saferight=false;
+		}
+		if(bodyt2[i]==headt2 && bodyh2[i]==headh2-1){
+			safeup=false;
+		}
+		if(bodyt2[i]==headt2 && bodyh2[i]==headh2+1){
+			safedown=false;
+		}
+		if(bodyt2[i]==headt2-1 && bodyh2[i]==headh2){
+			safeleft=false;
+		}
+	}
+	if(headt==headt2+1 && headh==headh2){
+		saferight=false;
+	}
+	if(headt==headt2 && headh==headh2-1){
+		safeup=false;
+	}
+	if(headt==headt2 && headh==headh2+1){
+		safedown=false;
+	}
+	if(headt==headt2-1 && headh==headh2){
+		safeleft=false;
+	}
+	if(headt2==40){
+		saferight=false;
+	}
+	if(headt2==1){
+		safeleft=false;
+	}
+	if(headh2==40){
+		safedown=false;
+	}
+	if(headh2==1){
+		safeup=false;
+	}
+	if(foodt-headt2>0){
+		if(saferight){
+			right2();
+		}else if(safeup){
+			up2();
+		}else if(safedown){
+			down2();
+		}else if(safeleft){
+			left2();
+		}else{
+			gameover2();
+		}
+	}else if(foodt-headt2==0){
+		if(foodh-headh2>0){
+			if(safedown){
+				down2();
+			}else if(safeleft){
+				left2();
+			}else if(saferight){
+				right2();
+			}else if(safeup){
+				up2();
+			}else{
+				gameover2();
+			}
+		}else if(foodh-headh2<0){
+			if(safeup){
+				up2();
+			}else if(safeleft){
+				left2();
+			}else if(saferight){
+				right2();
+			}else if(safedown){
+				down2();
+			}else{
+				gameover2();
+			}
+		}
+	}else{
+		if(safeleft){
+			left2();
+		}else if(safeup){
+			up2();
+		}else if(safedown){
+			down2();
+		}else if(saferight){
+			right2();
+		}else{
+			gameover2();
+		}
+	}
+}
+var autocount=0; var autocount2=0;
+var autor; var autor2;
+function auto(){
+	if(autocount%2==0){
+		clearway();
+		moveway="";
+		document.getElementById('auto').value="切换玩家";
+		document.getElementById('fast').disabled="disabled";
+		document.getElementById('slow').disabled="disabled";
+		document.getElementById('speed').innerHTML=4;
+		autor=setInterval("moveauto()",200);
+		autocount++;
+	}else{
+		if(bodyt.length==0){moveway="stop"}
+		if(bodyt[0]==headt && bodyh[0]==headh+1){moveway="up"}
+		if(bodyt[0]==headt && bodyh[0]==headh-1){moveway="down"}
+		if(bodyt[0]==headt-1 && bodyh[0]==headh){moveway="right"}
+		if(bodyt[0]==headt+1 && bodyh[0]==headh){moveway="left"}
+		document.getElementById('auto').value="切换电脑";
+		document.getElementById('fast').disabled="";
+		document.getElementById('slow').disabled="";
+		window.clearInterval(autor);
+		autocount++;
+	}
+}
+function auto2(){
+	if(autocount2%2==0){
+		clearway2();
+		moveway2="";
+		document.getElementById('auto2').value="切换玩家";
+		document.getElementById('fast2').disabled="disabled";
+		document.getElementById('slow2').disabled="disabled";
+		document.getElementById('speed2').innerHTML=4;
+		autor2=setInterval("moveauto2()",200);
+		autocount2++;
+	}else{
+		if(bodyt2.length==0){moveway2="stop"}
+		if(bodyt2[0]==headt2 && bodyh2[0]==headh2+1){moveway2="up"}
+		if(bodyt2[0]==headt2 && bodyh2[0]==headh2-1){moveway2="down"}
+		if(bodyt2[0]==headt2-1 && bodyh2[0]==headh2){moveway2="right"}
+		if(bodyt2[0]==headt2+1 && bodyh2[0]==headh2){moveway2="left"}
+		document.getElementById('auto2').value="切换电脑";
+		document.getElementById('fast2').disabled="";
+		document.getElementById('slow2').disabled="";
+		window.clearInterval(autor2);
+		autocount2++;
+	}
+}
+function start(){
+	makefood();
+	moveright();
+	moveleft2();
+	document.getElementById("getkey").focus();
+	document.getElementById('start').disabled="disabled";
+	document.getElementById('up').disabled="";
+	document.getElementById('down').disabled="";
+	document.getElementById('left').disabled="";
+	document.getElementById('right').disabled="";
+	document.getElementById('up2').disabled="";
+	document.getElementById('down2').disabled="";
+	document.getElementById('left2').disabled="";
+	document.getElementById('right2').disabled="";
+}
+var sorc=true;
+function s_c(){
+	if(sorc){
+		switch(moveway){
+			case "up":
+				window.clearInterval(mup);
+				break;
+			case "down":
+				window.clearInterval(mdown);
+				break;
+			case "left":
+				window.clearInterval(mleft);
+				break;
+			case "right":
+				window.clearInterval(mright);
+				break;
+		}
+		switch(moveway2){
+			case "up":
+				window.clearInterval(mup2);
+				break;
+			case "down":
+				window.clearInterval(mdown2);
+				break;
+			case "left":
+				window.clearInterval(mleft2);
+				break;
+			case "right":
+				window.clearInterval(mright2);
+				break;
+		}
+		sorc=!sorc;
+		document.getElementById("s_c").value="继续";
+	}else{
+		switch(moveway){
+			case "up":
+				mup=setInterval("up()",speed);
+				break;
+			case "down":
+				mdown=setInterval("down()",speed);
+				break;
+			case "left":
+				mleft=setInterval("left()",speed);
+				break;
+			case "right":
+				mright=setInterval("right()",speed);
+				break;
+		}
+		switch(moveway2){
+			case "up":
+				mup2=setInterval("up2()",speed2);
+				break;
+			case "down":
+				mdown2=setInterval("down2()",speed2);
+				break;
+			case "left":
+				mleft2=setInterval("left2()",speed2);
+				break;
+			case "right":
+				mright2=setInterval("right2()",speed2);
+				break;
+		}
+		sorc=!sorc;
+		document.getElementById("s_c").value="暂停";
+	}
+}
+function keydown(e){
+	var keynum=window.event ? e.keyCode : e.which;
+	switch(keynum){
+		case 37:
+			moveleft2();
+			break;
+		case 65:
+			moveleft();
+			break;
+		case 38:
+			moveup2();
+			break;
+		case 87:
+			moveup();
+			break;
+		case 39:
+			moveright2();
+			break;
+		case 68:
+			moveright();
+			break;
+		case 40:
+			movedown2();
+			break;
+		case 83:
+			movedown(); 
+			break;
+		case 74:
+			fast(); 
+			break;
+		case 75:
+			slow(); 
+			break;
+		case 97:
+			fast2(); 
+			break;
+		case 98:
+			slow2(); 
+			break;
+	}
+}
+</script>
+</head>
+
+<body onkeydown="return keydown(event)" tabIndex="1">
+<div style="width:604px; margin:0 auto;">
+    <div style="width:400px; height:400px; border:#000 solid 1px; float:left" >
+        <ul>
+            <li id="t1h1"></li>
+            <li id="t1h2"></li>
+            <li id="t1h3"></li>
+            <li id="t1h4"></li>
+            <li id="t1h5"></li>
+            <li id="t1h6"></li>
+            <li id="t1h7"></li>
+            <li id="t1h8"></li>
+            <li id="t1h9"></li>
+            <li id="t1h10"></li>
+            <li id="t1h11"></li>
+            <li id="t1h12"></li>
+            <li id="t1h13"></li>
+            <li id="t1h14"></li>
+            <li id="t1h15"></li>
+            <li id="t1h16"></li>
+            <li id="t1h17"></li>
+            <li id="t1h18"></li>
+            <li id="t1h19"></li>
+            <li id="t1h20"></li>
+            <li id="t1h21"></li>
+            <li id="t1h22"></li>
+            <li id="t1h23"></li>
+            <li id="t1h24"></li>
+            <li id="t1h25"></li>
+            <li id="t1h26"></li>
+            <li id="t1h27"></li>
+            <li id="t1h28"></li>
+            <li id="t1h29"></li>
+            <li id="t1h30"></li>
+            <li id="t1h31"></li>
+            <li id="t1h32"></li>
+            <li id="t1h33"></li>
+            <li id="t1h34"></li>
+            <li id="t1h35"></li>
+            <li id="t1h36"></li>
+            <li id="t1h37"></li>
+            <li id="t1h38"></li>
+            <li id="t1h39"></li>
+            <li id="t1h40"></li>
+        </ul>
+        <ul>
+            <li id="t2h1"></li>
+            <li id="t2h2"></li>
+            <li id="t2h3"></li>
+            <li id="t2h4"></li>
+            <li id="t2h5"></li>
+            <li id="t2h6"></li>
+            <li id="t2h7"></li>
+            <li id="t2h8"></li>
+            <li id="t2h9"></li>
+            <li id="t2h10"></li>
+            <li id="t2h11"></li>
+            <li id="t2h12"></li>
+            <li id="t2h13"></li>
+            <li id="t2h14"></li>
+            <li id="t2h15"></li>
+            <li id="t2h16"></li>
+            <li id="t2h17"></li>
+            <li id="t2h18"></li>
+            <li id="t2h19"></li>
+            <li id="t2h20"></li>
+            <li id="t2h21"></li>
+            <li id="t2h22"></li>
+            <li id="t2h23"></li>
+            <li id="t2h24"></li>
+            <li id="t2h25"></li>
+            <li id="t2h26"></li>
+            <li id="t2h27"></li>
+            <li id="t2h28"></li>
+            <li id="t2h29"></li>
+            <li id="t2h30"></li>
+            <li id="t2h31"></li>
+            <li id="t2h32"></li>
+            <li id="t2h33"></li>
+            <li id="t2h34"></li>
+            <li id="t2h35"></li>
+            <li id="t2h36"></li>
+            <li id="t2h37"></li>
+            <li id="t2h38"></li>
+            <li id="t2h39"></li>
+            <li id="t2h40"></li>
+        </ul>
+        <ul>
+            <li id="t3h1"></li>
+            <li id="t3h2"></li>
+            <li id="t3h3"></li>
+            <li id="t3h4"></li>
+            <li id="t3h5"></li>
+            <li id="t3h6"></li>
+            <li id="t3h7"></li>
+            <li id="t3h8"></li>
+            <li id="t3h9"></li>
+            <li id="t3h10"></li>
+            <li id="t3h11"></li>
+            <li id="t3h12"></li>
+            <li id="t3h13"></li>
+            <li id="t3h14"></li>
+            <li id="t3h15"></li>
+            <li id="t3h16"></li>
+            <li id="t3h17"></li>
+            <li id="t3h18"></li>
+            <li id="t3h19"></li>
+            <li id="t3h20"></li>
+            <li id="t3h21"></li>
+            <li id="t3h22"></li>
+            <li id="t3h23"></li>
+            <li id="t3h24"></li>
+            <li id="t3h25"></li>
+            <li id="t3h26"></li>
+            <li id="t3h27"></li>
+            <li id="t3h28"></li>
+            <li id="t3h29"></li>
+            <li id="t3h30"></li>
+            <li id="t3h31"></li>
+            <li id="t3h32"></li>
+            <li id="t3h33"></li>
+            <li id="t3h34"></li>
+            <li id="t3h35"></li>
+            <li id="t3h36"></li>
+            <li id="t3h37"></li>
+            <li id="t3h38"></li>
+            <li id="t3h39"></li>
+            <li id="t3h40"></li>
+        </ul>
+        <ul>
+            <li id="t4h1"></li>
+            <li id="t4h2"></li>
+            <li id="t4h3"></li>
+            <li id="t4h4"></li>
+            <li id="t4h5"></li>
+            <li id="t4h6"></li>
+            <li id="t4h7"></li>
+            <li id="t4h8"></li>
+            <li id="t4h9"></li>
+            <li id="t4h10"></li>
+            <li id="t4h11"></li>
+            <li id="t4h12"></li>
+            <li id="t4h13"></li>
+            <li id="t4h14"></li>
+            <li id="t4h15"></li>
+            <li id="t4h16"></li>
+            <li id="t4h17"></li>
+            <li id="t4h18"></li>
+            <li id="t4h19"></li>
+            <li id="t4h20"></li>
+            <li id="t4h21"></li>
+            <li id="t4h22"></li>
+            <li id="t4h23"></li>
+            <li id="t4h24"></li>
+            <li id="t4h25"></li>
+            <li id="t4h26"></li>
+            <li id="t4h27"></li>
+            <li id="t4h28"></li>
+            <li id="t4h29"></li>
+            <li id="t4h30"></li>
+            <li id="t4h31"></li>
+            <li id="t4h32"></li>
+            <li id="t4h33"></li>
+            <li id="t4h34"></li>
+            <li id="t4h35"></li>
+            <li id="t4h36"></li>
+            <li id="t4h37"></li>
+            <li id="t4h38"></li>
+            <li id="t4h39"></li>
+            <li id="t4h40"></li>
+        </ul>
+        <ul>
+            <li id="t5h1"></li>
+            <li id="t5h2"></li>
+            <li id="t5h3"></li>
+            <li id="t5h4"></li>
+            <li id="t5h5"></li>
+            <li id="t5h6"></li>
+            <li id="t5h7"></li>
+            <li id="t5h8"></li>
+            <li id="t5h9"></li>
+            <li id="t5h10"></li>
+            <li id="t5h11"></li>
+            <li id="t5h12"></li>
+            <li id="t5h13"></li>
+            <li id="t5h14"></li>
+            <li id="t5h15"></li>
+            <li id="t5h16"></li>
+            <li id="t5h17"></li>
+            <li id="t5h18"></li>
+            <li id="t5h19"></li>
+            <li id="t5h20"></li>
+            <li id="t5h21"></li>
+            <li id="t5h22"></li>
+            <li id="t5h23"></li>
+            <li id="t5h24"></li>
+            <li id="t5h25"></li>
+            <li id="t5h26"></li>
+            <li id="t5h27"></li>
+            <li id="t5h28"></li>
+            <li id="t5h29"></li>
+            <li id="t5h30"></li>
+            <li id="t5h31"></li>
+            <li id="t5h32"></li>
+            <li id="t5h33"></li>
+            <li id="t5h34"></li>
+            <li id="t5h35"></li>
+            <li id="t5h36"></li>
+            <li id="t5h37"></li>
+            <li id="t5h38"></li>
+            <li id="t5h39"></li>
+            <li id="t5h40"></li>
+        </ul>
+        <ul>
+            <li id="t6h1"></li>
+            <li id="t6h2"></li>
+            <li id="t6h3"></li>
+            <li id="t6h4"></li>
+            <li id="t6h5"></li>
+            <li id="t6h6"></li>
+            <li id="t6h7"></li>
+            <li id="t6h8"></li>
+            <li id="t6h9"></li>
+            <li id="t6h10"></li>
+            <li id="t6h11"></li>
+            <li id="t6h12"></li>
+            <li id="t6h13"></li>
+            <li id="t6h14"></li>
+            <li id="t6h15"></li>
+            <li id="t6h16"></li>
+            <li id="t6h17"></li>
+            <li id="t6h18"></li>
+            <li id="t6h19"></li>
+            <li id="t6h20"></li>
+            <li id="t6h21"></li>
+            <li id="t6h22"></li>
+            <li id="t6h23"></li>
+            <li id="t6h24"></li>
+            <li id="t6h25"></li>
+            <li id="t6h26"></li>
+            <li id="t6h27"></li>
+            <li id="t6h28"></li>
+            <li id="t6h29"></li>
+            <li id="t6h30"></li>
+            <li id="t6h31"></li>
+            <li id="t6h32"></li>
+            <li id="t6h33"></li>
+            <li id="t6h34"></li>
+            <li id="t6h35"></li>
+            <li id="t6h36"></li>
+            <li id="t6h37"></li>
+            <li id="t6h38"></li>
+            <li id="t6h39"></li>
+            <li id="t6h40"></li>
+        </ul>
+        <ul>
+            <li id="t7h1"></li>
+            <li id="t7h2"></li>
+            <li id="t7h3"></li>
+            <li id="t7h4"></li>
+            <li id="t7h5"></li>
+            <li id="t7h6"></li>
+            <li id="t7h7"></li>
+            <li id="t7h8"></li>
+            <li id="t7h9"></li>
+            <li id="t7h10"></li>
+            <li id="t7h11"></li>
+            <li id="t7h12"></li>
+            <li id="t7h13"></li>
+            <li id="t7h14"></li>
+            <li id="t7h15"></li>
+            <li id="t7h16"></li>
+            <li id="t7h17"></li>
+            <li id="t7h18"></li>
+            <li id="t7h19"></li>
+            <li id="t7h20"></li>
+            <li id="t7h21"></li>
+            <li id="t7h22"></li>
+            <li id="t7h23"></li>
+            <li id="t7h24"></li>
+            <li id="t7h25"></li>
+            <li id="t7h26"></li>
+            <li id="t7h27"></li>
+            <li id="t7h28"></li>
+            <li id="t7h29"></li>
+            <li id="t7h30"></li>
+            <li id="t7h31"></li>
+            <li id="t7h32"></li>
+            <li id="t7h33"></li>
+            <li id="t7h34"></li>
+            <li id="t7h35"></li>
+            <li id="t7h36"></li>
+            <li id="t7h37"></li>
+            <li id="t7h38"></li>
+            <li id="t7h39"></li>
+            <li id="t7h40"></li>
+        </ul>
+        <ul>
+            <li id="t8h1"></li>
+            <li id="t8h2"></li>
+            <li id="t8h3"></li>
+            <li id="t8h4"></li>
+            <li id="t8h5"></li>
+            <li id="t8h6"></li>
+            <li id="t8h7"></li>
+            <li id="t8h8"></li>
+            <li id="t8h9"></li>
+            <li id="t8h10"></li>
+            <li id="t8h11"></li>
+            <li id="t8h12"></li>
+            <li id="t8h13"></li>
+            <li id="t8h14"></li>
+            <li id="t8h15"></li>
+            <li id="t8h16"></li>
+            <li id="t8h17"></li>
+            <li id="t8h18"></li>
+            <li id="t8h19"></li>
+            <li id="t8h20"></li>
+            <li id="t8h21"></li>
+            <li id="t8h22"></li>
+            <li id="t8h23"></li>
+            <li id="t8h24"></li>
+            <li id="t8h25"></li>
+            <li id="t8h26"></li>
+            <li id="t8h27"></li>
+            <li id="t8h28"></li>
+            <li id="t8h29"></li>
+            <li id="t8h30"></li>
+            <li id="t8h31"></li>
+            <li id="t8h32"></li>
+            <li id="t8h33"></li>
+            <li id="t8h34"></li>
+            <li id="t8h35"></li>
+            <li id="t8h36"></li>
+            <li id="t8h37"></li>
+            <li id="t8h38"></li>
+            <li id="t8h39"></li>
+            <li id="t8h40"></li>
+        </ul>
+        <ul>
+            <li id="t9h1"></li>
+            <li id="t9h2"></li>
+            <li id="t9h3"></li>
+            <li id="t9h4"></li>
+            <li id="t9h5"></li>
+            <li id="t9h6"></li>
+            <li id="t9h7"></li>
+            <li id="t9h8"></li>
+            <li id="t9h9"></li>
+            <li id="t9h10"></li>
+            <li id="t9h11"></li>
+            <li id="t9h12"></li>
+            <li id="t9h13"></li>
+            <li id="t9h14"></li>
+            <li id="t9h15"></li>
+            <li id="t9h16"></li>
+            <li id="t9h17"></li>
+            <li id="t9h18"></li>
+            <li id="t9h19"></li>
+            <li id="t9h20"></li>
+            <li id="t9h21"></li>
+            <li id="t9h22"></li>
+            <li id="t9h23"></li>
+            <li id="t9h24"></li>
+            <li id="t9h25"></li>
+            <li id="t9h26"></li>
+            <li id="t9h27"></li>
+            <li id="t9h28"></li>
+            <li id="t9h29"></li>
+            <li id="t9h30"></li>
+            <li id="t9h31"></li>
+            <li id="t9h32"></li>
+            <li id="t9h33"></li>
+            <li id="t9h34"></li>
+            <li id="t9h35"></li>
+            <li id="t9h36"></li>
+            <li id="t9h37"></li>
+            <li id="t9h38"></li>
+            <li id="t9h39"></li>
+            <li id="t9h40"></li>
+        </ul>
+        <ul>
+            <li id="t10h1"></li>
+            <li id="t10h2"></li>
+            <li id="t10h3"></li>
+            <li id="t10h4"></li>
+            <li id="t10h5"></li>
+            <li id="t10h6"></li>
+            <li id="t10h7"></li>
+            <li id="t10h8"></li>
+            <li id="t10h9"></li>
+            <li id="t10h10"></li>
+            <li id="t10h11"></li>
+            <li id="t10h12"></li>
+            <li id="t10h13"></li>
+            <li id="t10h14"></li>
+            <li id="t10h15"></li>
+            <li id="t10h16"></li>
+            <li id="t10h17"></li>
+            <li id="t10h18"></li>
+            <li id="t10h19"></li>
+            <li id="t10h20"></li>
+            <li id="t10h21"></li>
+            <li id="t10h22"></li>
+            <li id="t10h23"></li>
+            <li id="t10h24"></li>
+            <li id="t10h25"></li>
+            <li id="t10h26"></li>
+            <li id="t10h27"></li>
+            <li id="t10h28"></li>
+            <li id="t10h29"></li>
+            <li id="t10h30"></li>
+            <li id="t10h31"></li>
+            <li id="t10h32"></li>
+            <li id="t10h33"></li>
+            <li id="t10h34"></li>
+            <li id="t10h35"></li>
+            <li id="t10h36"></li>
+            <li id="t10h37"></li>
+            <li id="t10h38"></li>
+            <li id="t10h39"></li>
+            <li id="t10h40"></li>
+        </ul>
+        <ul>
+            <li id="t11h1"></li>
+            <li id="t11h2"></li>
+            <li id="t11h3"></li>
+            <li id="t11h4"></li>
+            <li id="t11h5"></li>
+            <li id="t11h6"></li>
+            <li id="t11h7"></li>
+            <li id="t11h8"></li>
+            <li id="t11h9"></li>
+            <li id="t11h10"></li>
+            <li id="t11h11"></li>
+            <li id="t11h12"></li>
+            <li id="t11h13"></li>
+            <li id="t11h14"></li>
+            <li id="t11h15"></li>
+            <li id="t11h16"></li>
+            <li id="t11h17"></li>
+            <li id="t11h18"></li>
+            <li id="t11h19"></li>
+            <li id="t11h20"></li>
+            <li id="t11h21"></li>
+            <li id="t11h22"></li>
+            <li id="t11h23"></li>
+            <li id="t11h24"></li>
+            <li id="t11h25"></li>
+            <li id="t11h26"></li>
+            <li id="t11h27"></li>
+            <li id="t11h28"></li>
+            <li id="t11h29"></li>
+            <li id="t11h30"></li>
+            <li id="t11h31"></li>
+            <li id="t11h32"></li>
+            <li id="t11h33"></li>
+            <li id="t11h34"></li>
+            <li id="t11h35"></li>
+            <li id="t11h36"></li>
+            <li id="t11h37"></li>
+            <li id="t11h38"></li>
+            <li id="t11h39"></li>
+            <li id="t11h40"></li>
+        </ul>
+        <ul>
+            <li id="t12h1"></li>
+            <li id="t12h2"></li>
+            <li id="t12h3"></li>
+            <li id="t12h4"></li>
+            <li id="t12h5"></li>
+            <li id="t12h6"></li>
+            <li id="t12h7"></li>
+            <li id="t12h8"></li>
+            <li id="t12h9"></li>
+            <li id="t12h10"></li>
+            <li id="t12h11"></li>
+            <li id="t12h12"></li>
+            <li id="t12h13"></li>
+            <li id="t12h14"></li>
+            <li id="t12h15"></li>
+            <li id="t12h16"></li>
+            <li id="t12h17"></li>
+            <li id="t12h18"></li>
+            <li id="t12h19"></li>
+            <li id="t12h20"></li>
+            <li id="t12h21"></li>
+            <li id="t12h22"></li>
+            <li id="t12h23"></li>
+            <li id="t12h24"></li>
+            <li id="t12h25"></li>
+            <li id="t12h26"></li>
+            <li id="t12h27"></li>
+            <li id="t12h28"></li>
+            <li id="t12h29"></li>
+            <li id="t12h30"></li>
+            <li id="t12h31"></li>
+            <li id="t12h32"></li>
+            <li id="t12h33"></li>
+            <li id="t12h34"></li>
+            <li id="t12h35"></li>
+            <li id="t12h36"></li>
+            <li id="t12h37"></li>
+            <li id="t12h38"></li>
+            <li id="t12h39"></li>
+            <li id="t12h40"></li>
+        </ul>
+        <ul>
+            <li id="t13h1"></li>
+            <li id="t13h2"></li>
+            <li id="t13h3"></li>
+            <li id="t13h4"></li>
+            <li id="t13h5"></li>
+            <li id="t13h6"></li>
+            <li id="t13h7"></li>
+            <li id="t13h8"></li>
+            <li id="t13h9"></li>
+            <li id="t13h10"></li>
+            <li id="t13h11"></li>
+            <li id="t13h12"></li>
+            <li id="t13h13"></li>
+            <li id="t13h14"></li>
+            <li id="t13h15"></li>
+            <li id="t13h16"></li>
+            <li id="t13h17"></li>
+            <li id="t13h18"></li>
+            <li id="t13h19"></li>
+            <li id="t13h20"></li>
+            <li id="t13h21"></li>
+            <li id="t13h22"></li>
+            <li id="t13h23"></li>
+            <li id="t13h24"></li>
+            <li id="t13h25"></li>
+            <li id="t13h26"></li>
+            <li id="t13h27"></li>
+            <li id="t13h28"></li>
+            <li id="t13h29"></li>
+            <li id="t13h30"></li>
+            <li id="t13h31"></li>
+            <li id="t13h32"></li>
+            <li id="t13h33"></li>
+            <li id="t13h34"></li>
+            <li id="t13h35"></li>
+            <li id="t13h36"></li>
+            <li id="t13h37"></li>
+            <li id="t13h38"></li>
+            <li id="t13h39"></li>
+            <li id="t13h40"></li>
+        </ul>
+        <ul>
+            <li id="t14h1"></li>
+            <li id="t14h2"></li>
+            <li id="t14h3"></li>
+            <li id="t14h4"></li>
+            <li id="t14h5"></li>
+            <li id="t14h6"></li>
+            <li id="t14h7"></li>
+            <li id="t14h8"></li>
+            <li id="t14h9"></li>
+            <li id="t14h10"></li>
+            <li id="t14h11"></li>
+            <li id="t14h12"></li>
+            <li id="t14h13"></li>
+            <li id="t14h14"></li>
+            <li id="t14h15"></li>
+            <li id="t14h16"></li>
+            <li id="t14h17"></li>
+            <li id="t14h18"></li>
+            <li id="t14h19"></li>
+            <li id="t14h20"></li>
+            <li id="t14h21"></li>
+            <li id="t14h22"></li>
+            <li id="t14h23"></li>
+            <li id="t14h24"></li>
+            <li id="t14h25"></li>
+            <li id="t14h26"></li>
+            <li id="t14h27"></li>
+            <li id="t14h28"></li>
+            <li id="t14h29"></li>
+            <li id="t14h30"></li>
+            <li id="t14h31"></li>
+            <li id="t14h32"></li>
+            <li id="t14h33"></li>
+            <li id="t14h34"></li>
+            <li id="t14h35"></li>
+            <li id="t14h36"></li>
+            <li id="t14h37"></li>
+            <li id="t14h38"></li>
+            <li id="t14h39"></li>
+            <li id="t14h40"></li>
+        </ul>
+        <ul>
+            <li id="t15h1"></li>
+            <li id="t15h2"></li>
+            <li id="t15h3"></li>
+            <li id="t15h4"></li>
+            <li id="t15h5"></li>
+            <li id="t15h6"></li>
+            <li id="t15h7"></li>
+            <li id="t15h8"></li>
+            <li id="t15h9"></li>
+            <li id="t15h10"></li>
+            <li id="t15h11"></li>
+            <li id="t15h12"></li>
+            <li id="t15h13"></li>
+            <li id="t15h14"></li>
+            <li id="t15h15"></li>
+            <li id="t15h16"></li>
+            <li id="t15h17"></li>
+            <li id="t15h18"></li>
+            <li id="t15h19"></li>
+            <li id="t15h20"></li>
+            <li id="t15h21"></li>
+            <li id="t15h22"></li>
+            <li id="t15h23"></li>
+            <li id="t15h24"></li>
+            <li id="t15h25"></li>
+            <li id="t15h26"></li>
+            <li id="t15h27"></li>
+            <li id="t15h28"></li>
+            <li id="t15h29"></li>
+            <li id="t15h30"></li>
+            <li id="t15h31"></li>
+            <li id="t15h32"></li>
+            <li id="t15h33"></li>
+            <li id="t15h34"></li>
+            <li id="t15h35"></li>
+            <li id="t15h36"></li>
+            <li id="t15h37"></li>
+            <li id="t15h38"></li>
+            <li id="t15h39"></li>
+            <li id="t15h40"></li>
+        </ul>
+        <ul>
+            <li id="t16h1"></li>
+            <li id="t16h2"></li>
+            <li id="t16h3"></li>
+            <li id="t16h4"></li>
+            <li id="t16h5"></li>
+            <li id="t16h6"></li>
+            <li id="t16h7"></li>
+            <li id="t16h8"></li>
+            <li id="t16h9"></li>
+            <li id="t16h10"></li>
+            <li id="t16h11"></li>
+            <li id="t16h12"></li>
+            <li id="t16h13"></li>
+            <li id="t16h14"></li>
+            <li id="t16h15"></li>
+            <li id="t16h16"></li>
+            <li id="t16h17"></li>
+            <li id="t16h18"></li>
+            <li id="t16h19"></li>
+            <li id="t16h20"></li>
+            <li id="t16h21"></li>
+            <li id="t16h22"></li>
+            <li id="t16h23"></li>
+            <li id="t16h24"></li>
+            <li id="t16h25"></li>
+            <li id="t16h26"></li>
+            <li id="t16h27"></li>
+            <li id="t16h28"></li>
+            <li id="t16h29"></li>
+            <li id="t16h30"></li>
+            <li id="t16h31"></li>
+            <li id="t16h32"></li>
+            <li id="t16h33"></li>
+            <li id="t16h34"></li>
+            <li id="t16h35"></li>
+            <li id="t16h36"></li>
+            <li id="t16h37"></li>
+            <li id="t16h38"></li>
+            <li id="t16h39"></li>
+            <li id="t16h40"></li>
+        </ul>
+        <ul>
+            <li id="t17h1"></li>
+            <li id="t17h2"></li>
+            <li id="t17h3"></li>
+            <li id="t17h4"></li>
+            <li id="t17h5"></li>
+            <li id="t17h6"></li>
+            <li id="t17h7"></li>
+            <li id="t17h8"></li>
+            <li id="t17h9"></li>
+            <li id="t17h10"></li>
+            <li id="t17h11"></li>
+            <li id="t17h12"></li>
+            <li id="t17h13"></li>
+            <li id="t17h14"></li>
+            <li id="t17h15"></li>
+            <li id="t17h16"></li>
+            <li id="t17h17"></li>
+            <li id="t17h18"></li>
+            <li id="t17h19"></li>
+            <li id="t17h20"></li>
+            <li id="t17h21"></li>
+            <li id="t17h22"></li>
+            <li id="t17h23"></li>
+            <li id="t17h24"></li>
+            <li id="t17h25"></li>
+            <li id="t17h26"></li>
+            <li id="t17h27"></li>
+            <li id="t17h28"></li>
+            <li id="t17h29"></li>
+            <li id="t17h30"></li>
+            <li id="t17h31"></li>
+            <li id="t17h32"></li>
+            <li id="t17h33"></li>
+            <li id="t17h34"></li>
+            <li id="t17h35"></li>
+            <li id="t17h36"></li>
+            <li id="t17h37"></li>
+            <li id="t17h38"></li>
+            <li id="t17h39"></li>
+            <li id="t17h40"></li>
+        </ul>
+        <ul>
+            <li id="t18h1"></li>
+            <li id="t18h2"></li>
+            <li id="t18h3"></li>
+            <li id="t18h4"></li>
+            <li id="t18h5"></li>
+            <li id="t18h6"></li>
+            <li id="t18h7"></li>
+            <li id="t18h8"></li>
+            <li id="t18h9"></li>
+            <li id="t18h10"></li>
+            <li id="t18h11"></li>
+            <li id="t18h12"></li>
+            <li id="t18h13"></li>
+            <li id="t18h14"></li>
+            <li id="t18h15"></li>
+            <li id="t18h16"></li>
+            <li id="t18h17"></li>
+            <li id="t18h18"></li>
+            <li id="t18h19"></li>
+            <li id="t18h20"></li>
+            <li id="t18h21"></li>
+            <li id="t18h22"></li>
+            <li id="t18h23"></li>
+            <li id="t18h24"></li>
+            <li id="t18h25"></li>
+            <li id="t18h26"></li>
+            <li id="t18h27"></li>
+            <li id="t18h28"></li>
+            <li id="t18h29"></li>
+            <li id="t18h30"></li>
+            <li id="t18h31"></li>
+            <li id="t18h32"></li>
+            <li id="t18h33"></li>
+            <li id="t18h34"></li>
+            <li id="t18h35"></li>
+            <li id="t18h36"></li>
+            <li id="t18h37"></li>
+            <li id="t18h38"></li>
+            <li id="t18h39"></li>
+            <li id="t18h40"></li>
+        </ul>
+        <ul>
+            <li id="t19h1"></li>
+            <li id="t19h2"></li>
+            <li id="t19h3"></li>
+            <li id="t19h4"></li>
+            <li id="t19h5"></li>
+            <li id="t19h6"></li>
+            <li id="t19h7"></li>
+            <li id="t19h8"></li>
+            <li id="t19h9"></li>
+            <li id="t19h10"></li>
+            <li id="t19h11"></li>
+            <li id="t19h12"></li>
+            <li id="t19h13"></li>
+            <li id="t19h14"></li>
+            <li id="t19h15"></li>
+            <li id="t19h16"></li>
+            <li id="t19h17"></li>
+            <li id="t19h18"></li>
+            <li id="t19h19"></li>
+            <li id="t19h20"></li>
+            <li id="t19h21"></li>
+            <li id="t19h22"></li>
+            <li id="t19h23"></li>
+            <li id="t19h24"></li>
+            <li id="t19h25"></li>
+            <li id="t19h26"></li>
+            <li id="t19h27"></li>
+            <li id="t19h28"></li>
+            <li id="t19h29"></li>
+            <li id="t19h30"></li>
+            <li id="t19h31"></li>
+            <li id="t19h32"></li>
+            <li id="t19h33"></li>
+            <li id="t19h34"></li>
+            <li id="t19h35"></li>
+            <li id="t19h36"></li>
+            <li id="t19h37"></li>
+            <li id="t19h38"></li>
+            <li id="t19h39"></li>
+            <li id="t19h40"></li>
+        </ul>
+        <ul>
+            <li id="t20h1"></li>
+            <li id="t20h2"></li>
+            <li id="t20h3"></li>
+            <li id="t20h4"></li>
+            <li id="t20h5"></li>
+            <li id="t20h6"></li>
+            <li id="t20h7"></li>
+            <li id="t20h8"></li>
+            <li id="t20h9"></li>
+            <li id="t20h10"></li>
+            <li id="t20h11"></li>
+            <li id="t20h12"></li>
+            <li id="t20h13"></li>
+            <li id="t20h14"></li>
+            <li id="t20h15"></li>
+            <li id="t20h16"></li>
+            <li id="t20h17"></li>
+            <li id="t20h18"></li>
+            <li id="t20h19"></li>
+            <li id="t20h20"></li>
+            <li id="t20h21"></li>
+            <li id="t20h22"></li>
+            <li id="t20h23"></li>
+            <li id="t20h24"></li>
+            <li id="t20h25"></li>
+            <li id="t20h26"></li>
+            <li id="t20h27"></li>
+            <li id="t20h28"></li>
+            <li id="t20h29"></li>
+            <li id="t20h30"></li>
+            <li id="t20h31"></li>
+            <li id="t20h32"></li>
+            <li id="t20h33"></li>
+            <li id="t20h34"></li>
+            <li id="t20h35"></li>
+            <li id="t20h36"></li>
+            <li id="t20h37"></li>
+            <li id="t20h38"></li>
+            <li id="t20h39"></li>
+            <li id="t20h40"></li>
+        </ul>
+        <ul>
+            <li id="t21h1"></li>
+            <li id="t21h2"></li>
+            <li id="t21h3"></li>
+            <li id="t21h4"></li>
+            <li id="t21h5"></li>
+            <li id="t21h6"></li>
+            <li id="t21h7"></li>
+            <li id="t21h8"></li>
+            <li id="t21h9"></li>
+            <li id="t21h10"></li>
+            <li id="t21h11"></li>
+            <li id="t21h12"></li>
+            <li id="t21h13"></li>
+            <li id="t21h14"></li>
+            <li id="t21h15"></li>
+            <li id="t21h16"></li>
+            <li id="t21h17"></li>
+            <li id="t21h18"></li>
+            <li id="t21h19"></li>
+            <li id="t21h20"></li>
+            <li id="t21h21"></li>
+            <li id="t21h22"></li>
+            <li id="t21h23"></li>
+            <li id="t21h24"></li>
+            <li id="t21h25"></li>
+            <li id="t21h26"></li>
+            <li id="t21h27"></li>
+            <li id="t21h28"></li>
+            <li id="t21h29"></li>
+            <li id="t21h30"></li>
+            <li id="t21h31"></li>
+            <li id="t21h32"></li>
+            <li id="t21h33"></li>
+            <li id="t21h34"></li>
+            <li id="t21h35"></li>
+            <li id="t21h36"></li>
+            <li id="t21h37"></li>
+            <li id="t21h38"></li>
+            <li id="t21h39"></li>
+            <li id="t21h40"></li>
+        </ul>
+        <ul>
+            <li id="t22h1"></li>
+            <li id="t22h2"></li>
+            <li id="t22h3"></li>
+            <li id="t22h4"></li>
+            <li id="t22h5"></li>
+            <li id="t22h6"></li>
+            <li id="t22h7"></li>
+            <li id="t22h8"></li>
+            <li id="t22h9"></li>
+            <li id="t22h10"></li>
+            <li id="t22h11"></li>
+            <li id="t22h12"></li>
+            <li id="t22h13"></li>
+            <li id="t22h14"></li>
+            <li id="t22h15"></li>
+            <li id="t22h16"></li>
+            <li id="t22h17"></li>
+            <li id="t22h18"></li>
+            <li id="t22h19"></li>
+            <li id="t22h20"></li>
+            <li id="t22h21"></li>
+            <li id="t22h22"></li>
+            <li id="t22h23"></li>
+            <li id="t22h24"></li>
+            <li id="t22h25"></li>
+            <li id="t22h26"></li>
+            <li id="t22h27"></li>
+            <li id="t22h28"></li>
+            <li id="t22h29"></li>
+            <li id="t22h30"></li>
+            <li id="t22h31"></li>
+            <li id="t22h32"></li>
+            <li id="t22h33"></li>
+            <li id="t22h34"></li>
+            <li id="t22h35"></li>
+            <li id="t22h36"></li>
+            <li id="t22h37"></li>
+            <li id="t22h38"></li>
+            <li id="t22h39"></li>
+            <li id="t22h40"></li>
+        </ul>
+        <ul>
+            <li id="t23h1"></li>
+            <li id="t23h2"></li>
+            <li id="t23h3"></li>
+            <li id="t23h4"></li>
+            <li id="t23h5"></li>
+            <li id="t23h6"></li>
+            <li id="t23h7"></li>
+            <li id="t23h8"></li>
+            <li id="t23h9"></li>
+            <li id="t23h10"></li>
+            <li id="t23h11"></li>
+            <li id="t23h12"></li>
+            <li id="t23h13"></li>
+            <li id="t23h14"></li>
+            <li id="t23h15"></li>
+            <li id="t23h16"></li>
+            <li id="t23h17"></li>
+            <li id="t23h18"></li>
+            <li id="t23h19"></li>
+            <li id="t23h20"></li>
+            <li id="t23h21"></li>
+            <li id="t23h22"></li>
+            <li id="t23h23"></li>
+            <li id="t23h24"></li>
+            <li id="t23h25"></li>
+            <li id="t23h26"></li>
+            <li id="t23h27"></li>
+            <li id="t23h28"></li>
+            <li id="t23h29"></li>
+            <li id="t23h30"></li>
+            <li id="t23h31"></li>
+            <li id="t23h32"></li>
+            <li id="t23h33"></li>
+            <li id="t23h34"></li>
+            <li id="t23h35"></li>
+            <li id="t23h36"></li>
+            <li id="t23h37"></li>
+            <li id="t23h38"></li>
+            <li id="t23h39"></li>
+            <li id="t23h40"></li>
+        </ul>
+        <ul>
+            <li id="t24h1"></li>
+            <li id="t24h2"></li>
+            <li id="t24h3"></li>
+            <li id="t24h4"></li>
+            <li id="t24h5"></li>
+            <li id="t24h6"></li>
+            <li id="t24h7"></li>
+            <li id="t24h8"></li>
+            <li id="t24h9"></li>
+            <li id="t24h10"></li>
+            <li id="t24h11"></li>
+            <li id="t24h12"></li>
+            <li id="t24h13"></li>
+            <li id="t24h14"></li>
+            <li id="t24h15"></li>
+            <li id="t24h16"></li>
+            <li id="t24h17"></li>
+            <li id="t24h18"></li>
+            <li id="t24h19"></li>
+            <li id="t24h20"></li>
+            <li id="t24h21"></li>
+            <li id="t24h22"></li>
+            <li id="t24h23"></li>
+            <li id="t24h24"></li>
+            <li id="t24h25"></li>
+            <li id="t24h26"></li>
+            <li id="t24h27"></li>
+            <li id="t24h28"></li>
+            <li id="t24h29"></li>
+            <li id="t24h30"></li>
+            <li id="t24h31"></li>
+            <li id="t24h32"></li>
+            <li id="t24h33"></li>
+            <li id="t24h34"></li>
+            <li id="t24h35"></li>
+            <li id="t24h36"></li>
+            <li id="t24h37"></li>
+            <li id="t24h38"></li>
+            <li id="t24h39"></li>
+            <li id="t24h40"></li>
+        </ul>
+        <ul>
+            <li id="t25h1"></li>
+            <li id="t25h2"></li>
+            <li id="t25h3"></li>
+            <li id="t25h4"></li>
+            <li id="t25h5"></li>
+            <li id="t25h6"></li>
+            <li id="t25h7"></li>
+            <li id="t25h8"></li>
+            <li id="t25h9"></li>
+            <li id="t25h10"></li>
+            <li id="t25h11"></li>
+            <li id="t25h12"></li>
+            <li id="t25h13"></li>
+            <li id="t25h14"></li>
+            <li id="t25h15"></li>
+            <li id="t25h16"></li>
+            <li id="t25h17"></li>
+            <li id="t25h18"></li>
+            <li id="t25h19"></li>
+            <li id="t25h20"></li>
+            <li id="t25h21"></li>
+            <li id="t25h22"></li>
+            <li id="t25h23"></li>
+            <li id="t25h24"></li>
+            <li id="t25h25"></li>
+            <li id="t25h26"></li>
+            <li id="t25h27"></li>
+            <li id="t25h28"></li>
+            <li id="t25h29"></li>
+            <li id="t25h30"></li>
+            <li id="t25h31"></li>
+            <li id="t25h32"></li>
+            <li id="t25h33"></li>
+            <li id="t25h34"></li>
+            <li id="t25h35"></li>
+            <li id="t25h36"></li>
+            <li id="t25h37"></li>
+            <li id="t25h38"></li>
+            <li id="t25h39"></li>
+            <li id="t25h40"></li>
+        </ul>
+        <ul>
+            <li id="t26h1"></li>
+            <li id="t26h2"></li>
+            <li id="t26h3"></li>
+            <li id="t26h4"></li>
+            <li id="t26h5"></li>
+            <li id="t26h6"></li>
+            <li id="t26h7"></li>
+            <li id="t26h8"></li>
+            <li id="t26h9"></li>
+            <li id="t26h10"></li>
+            <li id="t26h11"></li>
+            <li id="t26h12"></li>
+            <li id="t26h13"></li>
+            <li id="t26h14"></li>
+            <li id="t26h15"></li>
+            <li id="t26h16"></li>
+            <li id="t26h17"></li>
+            <li id="t26h18"></li>
+            <li id="t26h19"></li>
+            <li id="t26h20"></li>
+            <li id="t26h21"></li>
+            <li id="t26h22"></li>
+            <li id="t26h23"></li>
+            <li id="t26h24"></li>
+            <li id="t26h25"></li>
+            <li id="t26h26"></li>
+            <li id="t26h27"></li>
+            <li id="t26h28"></li>
+            <li id="t26h29"></li>
+            <li id="t26h30"></li>
+            <li id="t26h31"></li>
+            <li id="t26h32"></li>
+            <li id="t26h33"></li>
+            <li id="t26h34"></li>
+            <li id="t26h35"></li>
+            <li id="t26h36"></li>
+            <li id="t26h37"></li>
+            <li id="t26h38"></li>
+            <li id="t26h39"></li>
+            <li id="t26h40"></li>
+        </ul>
+        <ul>
+            <li id="t27h1"></li>
+            <li id="t27h2"></li>
+            <li id="t27h3"></li>
+            <li id="t27h4"></li>
+            <li id="t27h5"></li>
+            <li id="t27h6"></li>
+            <li id="t27h7"></li>
+            <li id="t27h8"></li>
+            <li id="t27h9"></li>
+            <li id="t27h10"></li>
+            <li id="t27h11"></li>
+            <li id="t27h12"></li>
+            <li id="t27h13"></li>
+            <li id="t27h14"></li>
+            <li id="t27h15"></li>
+            <li id="t27h16"></li>
+            <li id="t27h17"></li>
+            <li id="t27h18"></li>
+            <li id="t27h19"></li>
+            <li id="t27h20"></li>
+            <li id="t27h21"></li>
+            <li id="t27h22"></li>
+            <li id="t27h23"></li>
+            <li id="t27h24"></li>
+            <li id="t27h25"></li>
+            <li id="t27h26"></li>
+            <li id="t27h27"></li>
+            <li id="t27h28"></li>
+            <li id="t27h29"></li>
+            <li id="t27h30"></li>
+            <li id="t27h31"></li>
+            <li id="t27h32"></li>
+            <li id="t27h33"></li>
+            <li id="t27h34"></li>
+            <li id="t27h35"></li>
+            <li id="t27h36"></li>
+            <li id="t27h37"></li>
+            <li id="t27h38"></li>
+            <li id="t27h39"></li>
+            <li id="t27h40"></li>
+        </ul>
+        <ul>
+            <li id="t28h1"></li>
+            <li id="t28h2"></li>
+            <li id="t28h3"></li>
+            <li id="t28h4"></li>
+            <li id="t28h5"></li>
+            <li id="t28h6"></li>
+            <li id="t28h7"></li>
+            <li id="t28h8"></li>
+            <li id="t28h9"></li>
+            <li id="t28h10"></li>
+            <li id="t28h11"></li>
+            <li id="t28h12"></li>
+            <li id="t28h13"></li>
+            <li id="t28h14"></li>
+            <li id="t28h15"></li>
+            <li id="t28h16"></li>
+            <li id="t28h17"></li>
+            <li id="t28h18"></li>
+            <li id="t28h19"></li>
+            <li id="t28h20"></li>
+            <li id="t28h21"></li>
+            <li id="t28h22"></li>
+            <li id="t28h23"></li>
+            <li id="t28h24"></li>
+            <li id="t28h25"></li>
+            <li id="t28h26"></li>
+            <li id="t28h27"></li>
+            <li id="t28h28"></li>
+            <li id="t28h29"></li>
+            <li id="t28h30"></li>
+            <li id="t28h31"></li>
+            <li id="t28h32"></li>
+            <li id="t28h33"></li>
+            <li id="t28h34"></li>
+            <li id="t28h35"></li>
+            <li id="t28h36"></li>
+            <li id="t28h37"></li>
+            <li id="t28h38"></li>
+            <li id="t28h39"></li>
+            <li id="t28h40"></li>
+        </ul>
+        <ul>
+            <li id="t29h1"></li>
+            <li id="t29h2"></li>
+            <li id="t29h3"></li>
+            <li id="t29h4"></li>
+            <li id="t29h5"></li>
+            <li id="t29h6"></li>
+            <li id="t29h7"></li>
+            <li id="t29h8"></li>
+            <li id="t29h9"></li>
+            <li id="t29h10"></li>
+            <li id="t29h11"></li>
+            <li id="t29h12"></li>
+            <li id="t29h13"></li>
+            <li id="t29h14"></li>
+            <li id="t29h15"></li>
+            <li id="t29h16"></li>
+            <li id="t29h17"></li>
+            <li id="t29h18"></li>
+            <li id="t29h19"></li>
+            <li id="t29h20"></li>
+            <li id="t29h21"></li>
+            <li id="t29h22"></li>
+            <li id="t29h23"></li>
+            <li id="t29h24"></li>
+            <li id="t29h25"></li>
+            <li id="t29h26"></li>
+            <li id="t29h27"></li>
+            <li id="t29h28"></li>
+            <li id="t29h29"></li>
+            <li id="t29h30"></li>
+            <li id="t29h31"></li>
+            <li id="t29h32"></li>
+            <li id="t29h33"></li>
+            <li id="t29h34"></li>
+            <li id="t29h35"></li>
+            <li id="t29h36"></li>
+            <li id="t29h37"></li>
+            <li id="t29h38"></li>
+            <li id="t29h39"></li>
+            <li id="t29h40"></li>
+        </ul>
+        <ul>
+            <li id="t30h1"></li>
+            <li id="t30h2"></li>
+            <li id="t30h3"></li>
+            <li id="t30h4"></li>
+            <li id="t30h5"></li>
+            <li id="t30h6"></li>
+            <li id="t30h7"></li>
+            <li id="t30h8"></li>
+            <li id="t30h9"></li>
+            <li id="t30h10"></li>
+            <li id="t30h11"></li>
+            <li id="t30h12"></li>
+            <li id="t30h13"></li>
+            <li id="t30h14"></li>
+            <li id="t30h15"></li>
+            <li id="t30h16"></li>
+            <li id="t30h17"></li>
+            <li id="t30h18"></li>
+            <li id="t30h19"></li>
+            <li id="t30h20"></li>
+            <li id="t30h21"></li>
+            <li id="t30h22"></li>
+            <li id="t30h23"></li>
+            <li id="t30h24"></li>
+            <li id="t30h25"></li>
+            <li id="t30h26"></li>
+            <li id="t30h27"></li>
+            <li id="t30h28"></li>
+            <li id="t30h29"></li>
+            <li id="t30h30"></li>
+            <li id="t30h31"></li>
+            <li id="t30h32"></li>
+            <li id="t30h33"></li>
+            <li id="t30h34"></li>
+            <li id="t30h35"></li>
+            <li id="t30h36"></li>
+            <li id="t30h37"></li>
+            <li id="t30h38"></li>
+            <li id="t30h39"></li>
+            <li id="t30h40"></li>
+        </ul>
+        <ul>
+            <li id="t31h1"></li>
+            <li id="t31h2"></li>
+            <li id="t31h3"></li>
+            <li id="t31h4"></li>
+            <li id="t31h5"></li>
+            <li id="t31h6"></li>
+            <li id="t31h7"></li>
+            <li id="t31h8"></li>
+            <li id="t31h9"></li>
+            <li id="t31h10"></li>
+            <li id="t31h11"></li>
+            <li id="t31h12"></li>
+            <li id="t31h13"></li>
+            <li id="t31h14"></li>
+            <li id="t31h15"></li>
+            <li id="t31h16"></li>
+            <li id="t31h17"></li>
+            <li id="t31h18"></li>
+            <li id="t31h19"></li>
+            <li id="t31h20"></li>
+            <li id="t31h21"></li>
+            <li id="t31h22"></li>
+            <li id="t31h23"></li>
+            <li id="t31h24"></li>
+            <li id="t31h25"></li>
+            <li id="t31h26"></li>
+            <li id="t31h27"></li>
+            <li id="t31h28"></li>
+            <li id="t31h29"></li>
+            <li id="t31h30"></li>
+            <li id="t31h31"></li>
+            <li id="t31h32"></li>
+            <li id="t31h33"></li>
+            <li id="t31h34"></li>
+            <li id="t31h35"></li>
+            <li id="t31h36"></li>
+            <li id="t31h37"></li>
+            <li id="t31h38"></li>
+            <li id="t31h39"></li>
+            <li id="t31h40"></li>
+        </ul>
+        <ul>
+            <li id="t32h1"></li>
+            <li id="t32h2"></li>
+            <li id="t32h3"></li>
+            <li id="t32h4"></li>
+            <li id="t32h5"></li>
+            <li id="t32h6"></li>
+            <li id="t32h7"></li>
+            <li id="t32h8"></li>
+            <li id="t32h9"></li>
+            <li id="t32h10"></li>
+            <li id="t32h11"></li>
+            <li id="t32h12"></li>
+            <li id="t32h13"></li>
+            <li id="t32h14"></li>
+            <li id="t32h15"></li>
+            <li id="t32h16"></li>
+            <li id="t32h17"></li>
+            <li id="t32h18"></li>
+            <li id="t32h19"></li>
+            <li id="t32h20"></li>
+            <li id="t32h21"></li>
+            <li id="t32h22"></li>
+            <li id="t32h23"></li>
+            <li id="t32h24"></li>
+            <li id="t32h25"></li>
+            <li id="t32h26"></li>
+            <li id="t32h27"></li>
+            <li id="t32h28"></li>
+            <li id="t32h29"></li>
+            <li id="t32h30"></li>
+            <li id="t32h31"></li>
+            <li id="t32h32"></li>
+            <li id="t32h33"></li>
+            <li id="t32h34"></li>
+            <li id="t32h35"></li>
+            <li id="t32h36"></li>
+            <li id="t32h37"></li>
+            <li id="t32h38"></li>
+            <li id="t32h39"></li>
+            <li id="t32h40"></li>
+        </ul>
+        <ul>
+            <li id="t33h1"></li>
+            <li id="t33h2"></li>
+            <li id="t33h3"></li>
+            <li id="t33h4"></li>
+            <li id="t33h5"></li>
+            <li id="t33h6"></li>
+            <li id="t33h7"></li>
+            <li id="t33h8"></li>
+            <li id="t33h9"></li>
+            <li id="t33h10"></li>
+            <li id="t33h11"></li>
+            <li id="t33h12"></li>
+            <li id="t33h13"></li>
+            <li id="t33h14"></li>
+            <li id="t33h15"></li>
+            <li id="t33h16"></li>
+            <li id="t33h17"></li>
+            <li id="t33h18"></li>
+            <li id="t33h19"></li>
+            <li id="t33h20"></li>
+            <li id="t33h21"></li>
+            <li id="t33h22"></li>
+            <li id="t33h23"></li>
+            <li id="t33h24"></li>
+            <li id="t33h25"></li>
+            <li id="t33h26"></li>
+            <li id="t33h27"></li>
+            <li id="t33h28"></li>
+            <li id="t33h29"></li>
+            <li id="t33h30"></li>
+            <li id="t33h31"></li>
+            <li id="t33h32"></li>
+            <li id="t33h33"></li>
+            <li id="t33h34"></li>
+            <li id="t33h35"></li>
+            <li id="t33h36"></li>
+            <li id="t33h37"></li>
+            <li id="t33h38"></li>
+            <li id="t33h39"></li>
+            <li id="t33h40"></li>
+        </ul>
+        <ul>
+            <li id="t34h1"></li>
+            <li id="t34h2"></li>
+            <li id="t34h3"></li>
+            <li id="t34h4"></li>
+            <li id="t34h5"></li>
+            <li id="t34h6"></li>
+            <li id="t34h7"></li>
+            <li id="t34h8"></li>
+            <li id="t34h9"></li>
+            <li id="t34h10"></li>
+            <li id="t34h11"></li>
+            <li id="t34h12"></li>
+            <li id="t34h13"></li>
+            <li id="t34h14"></li>
+            <li id="t34h15"></li>
+            <li id="t34h16"></li>
+            <li id="t34h17"></li>
+            <li id="t34h18"></li>
+            <li id="t34h19"></li>
+            <li id="t34h20"></li>
+            <li id="t34h21"></li>
+            <li id="t34h22"></li>
+            <li id="t34h23"></li>
+            <li id="t34h24"></li>
+            <li id="t34h25"></li>
+            <li id="t34h26"></li>
+            <li id="t34h27"></li>
+            <li id="t34h28"></li>
+            <li id="t34h29"></li>
+            <li id="t34h30"></li>
+            <li id="t34h31"></li>
+            <li id="t34h32"></li>
+            <li id="t34h33"></li>
+            <li id="t34h34"></li>
+            <li id="t34h35"></li>
+            <li id="t34h36"></li>
+            <li id="t34h37"></li>
+            <li id="t34h38"></li>
+            <li id="t34h39"></li>
+            <li id="t34h40"></li>
+        </ul>
+        <ul>
+            <li id="t35h1"></li>
+            <li id="t35h2"></li>
+            <li id="t35h3"></li>
+            <li id="t35h4"></li>
+            <li id="t35h5"></li>
+            <li id="t35h6"></li>
+            <li id="t35h7"></li>
+            <li id="t35h8"></li>
+            <li id="t35h9"></li>
+            <li id="t35h10"></li>
+            <li id="t35h11"></li>
+            <li id="t35h12"></li>
+            <li id="t35h13"></li>
+            <li id="t35h14"></li>
+            <li id="t35h15"></li>
+            <li id="t35h16"></li>
+            <li id="t35h17"></li>
+            <li id="t35h18"></li>
+            <li id="t35h19"></li>
+            <li id="t35h20"></li>
+            <li id="t35h21"></li>
+            <li id="t35h22"></li>
+            <li id="t35h23"></li>
+            <li id="t35h24"></li>
+            <li id="t35h25"></li>
+            <li id="t35h26"></li>
+            <li id="t35h27"></li>
+            <li id="t35h28"></li>
+            <li id="t35h29"></li>
+            <li id="t35h30"></li>
+            <li id="t35h31"></li>
+            <li id="t35h32"></li>
+            <li id="t35h33"></li>
+            <li id="t35h34"></li>
+            <li id="t35h35"></li>
+            <li id="t35h36"></li>
+            <li id="t35h37"></li>
+            <li id="t35h38"></li>
+            <li id="t35h39"></li>
+            <li id="t35h40"></li>
+        </ul>
+        <ul>
+            <li id="t36h1"></li>
+            <li id="t36h2"></li>
+            <li id="t36h3"></li>
+            <li id="t36h4"></li>
+            <li id="t36h5"></li>
+            <li id="t36h6"></li>
+            <li id="t36h7"></li>
+            <li id="t36h8"></li>
+            <li id="t36h9"></li>
+            <li id="t36h10"></li>
+            <li id="t36h11"></li>
+            <li id="t36h12"></li>
+            <li id="t36h13"></li>
+            <li id="t36h14"></li>
+            <li id="t36h15"></li>
+            <li id="t36h16"></li>
+            <li id="t36h17"></li>
+            <li id="t36h18"></li>
+            <li id="t36h19"></li>
+            <li id="t36h20"></li>
+            <li id="t36h21"></li>
+            <li id="t36h22"></li>
+            <li id="t36h23"></li>
+            <li id="t36h24"></li>
+            <li id="t36h25"></li>
+            <li id="t36h26"></li>
+            <li id="t36h27"></li>
+            <li id="t36h28"></li>
+            <li id="t36h29"></li>
+            <li id="t36h30"></li>
+            <li id="t36h31"></li>
+            <li id="t36h32"></li>
+            <li id="t36h33"></li>
+            <li id="t36h34"></li>
+            <li id="t36h35"></li>
+            <li id="t36h36"></li>
+            <li id="t36h37"></li>
+            <li id="t36h38"></li>
+            <li id="t36h39"></li>
+            <li id="t36h40"></li>
+        </ul>
+        <ul>
+            <li id="t37h1"></li>
+            <li id="t37h2"></li>
+            <li id="t37h3"></li>
+            <li id="t37h4"></li>
+            <li id="t37h5"></li>
+            <li id="t37h6"></li>
+            <li id="t37h7"></li>
+            <li id="t37h8"></li>
+            <li id="t37h9"></li>
+            <li id="t37h10"></li>
+            <li id="t37h11"></li>
+            <li id="t37h12"></li>
+            <li id="t37h13"></li>
+            <li id="t37h14"></li>
+            <li id="t37h15"></li>
+            <li id="t37h16"></li>
+            <li id="t37h17"></li>
+            <li id="t37h18"></li>
+            <li id="t37h19"></li>
+            <li id="t37h20"></li>
+            <li id="t37h21"></li>
+            <li id="t37h22"></li>
+            <li id="t37h23"></li>
+            <li id="t37h24"></li>
+            <li id="t37h25"></li>
+            <li id="t37h26"></li>
+            <li id="t37h27"></li>
+            <li id="t37h28"></li>
+            <li id="t37h29"></li>
+            <li id="t37h30"></li>
+            <li id="t37h31"></li>
+            <li id="t37h32"></li>
+            <li id="t37h33"></li>
+            <li id="t37h34"></li>
+            <li id="t37h35"></li>
+            <li id="t37h36"></li>
+            <li id="t37h37"></li>
+            <li id="t37h38"></li>
+            <li id="t37h39"></li>
+            <li id="t37h40"></li>
+        </ul>
+        <ul>
+            <li id="t38h1"></li>
+            <li id="t38h2"></li>
+            <li id="t38h3"></li>
+            <li id="t38h4"></li>
+            <li id="t38h5"></li>
+            <li id="t38h6"></li>
+            <li id="t38h7"></li>
+            <li id="t38h8"></li>
+            <li id="t38h9"></li>
+            <li id="t38h10"></li>
+            <li id="t38h11"></li>
+            <li id="t38h12"></li>
+            <li id="t38h13"></li>
+            <li id="t38h14"></li>
+            <li id="t38h15"></li>
+            <li id="t38h16"></li>
+            <li id="t38h17"></li>
+            <li id="t38h18"></li>
+            <li id="t38h19"></li>
+            <li id="t38h20"></li>
+            <li id="t38h21"></li>
+            <li id="t38h22"></li>
+            <li id="t38h23"></li>
+            <li id="t38h24"></li>
+            <li id="t38h25"></li>
+            <li id="t38h26"></li>
+            <li id="t38h27"></li>
+            <li id="t38h28"></li>
+            <li id="t38h29"></li>
+            <li id="t38h30"></li>
+            <li id="t38h31"></li>
+            <li id="t38h32"></li>
+            <li id="t38h33"></li>
+            <li id="t38h34"></li>
+            <li id="t38h35"></li>
+            <li id="t38h36"></li>
+            <li id="t38h37"></li>
+            <li id="t38h38"></li>
+            <li id="t38h39"></li>
+            <li id="t38h40"></li>
+        </ul>
+        <ul>
+            <li id="t39h1"></li>
+            <li id="t39h2"></li>
+            <li id="t39h3"></li>
+            <li id="t39h4"></li>
+            <li id="t39h5"></li>
+            <li id="t39h6"></li>
+            <li id="t39h7"></li>
+            <li id="t39h8"></li>
+            <li id="t39h9"></li>
+            <li id="t39h10"></li>
+            <li id="t39h11"></li>
+            <li id="t39h12"></li>
+            <li id="t39h13"></li>
+            <li id="t39h14"></li>
+            <li id="t39h15"></li>
+            <li id="t39h16"></li>
+            <li id="t39h17"></li>
+            <li id="t39h18"></li>
+            <li id="t39h19"></li>
+            <li id="t39h20"></li>
+            <li id="t39h21"></li>
+            <li id="t39h22"></li>
+            <li id="t39h23"></li>
+            <li id="t39h24"></li>
+            <li id="t39h25"></li>
+            <li id="t39h26"></li>
+            <li id="t39h27"></li>
+            <li id="t39h28"></li>
+            <li id="t39h29"></li>
+            <li id="t39h30"></li>
+            <li id="t39h31"></li>
+            <li id="t39h32"></li>
+            <li id="t39h33"></li>
+            <li id="t39h34"></li>
+            <li id="t39h35"></li>
+            <li id="t39h36"></li>
+            <li id="t39h37"></li>
+            <li id="t39h38"></li>
+            <li id="t39h39"></li>
+            <li id="t39h40"></li>
+        </ul>
+        <ul>
+            <li id="t40h1"></li>
+            <li id="t40h2"></li>
+            <li id="t40h3"></li>
+            <li id="t40h4"></li>
+            <li id="t40h5"></li>
+            <li id="t40h6"></li>
+            <li id="t40h7"></li>
+            <li id="t40h8"></li>
+            <li id="t40h9"></li>
+            <li id="t40h10"></li>
+            <li id="t40h11"></li>
+            <li id="t40h12"></li>
+            <li id="t40h13"></li>
+            <li id="t40h14"></li>
+            <li id="t40h15"></li>
+            <li id="t40h16"></li>
+            <li id="t40h17"></li>
+            <li id="t40h18"></li>
+            <li id="t40h19"></li>
+            <li id="t40h20"></li>
+            <li id="t40h21"></li>
+            <li id="t40h22"></li>
+            <li id="t40h23"></li>
+            <li id="t40h24"></li>
+            <li id="t40h25"></li>
+            <li id="t40h26"></li>
+            <li id="t40h27"></li>
+            <li id="t40h28"></li>
+            <li id="t40h29"></li>
+            <li id="t40h30"></li>
+            <li id="t40h31"></li>
+            <li id="t40h32"></li>
+            <li id="t40h33"></li>
+            <li id="t40h34"></li>
+            <li id="t40h35"></li>
+            <li id="t40h36"></li>
+            <li id="t40h37"></li>
+            <li id="t40h38"></li>
+            <li id="t40h39"></li>
+            <li id="t40h40"></li>
+        </ul>
+    </div>
+    <div style="float:left; width:200px; height:400px; border:#000 solid 1px;">
+        <div class="scoreshow">玩家1：<span id="score">00</span></div>
+        <div class="scoreshow" style="color:#093;">玩家2：<span id="score2">00</span></div>
+        <div style="width:200px; text-align:center;">
+            <input type="button" id="start" class="bt" value="开始" onclick="start()" />
+            <input type="button" id="s_c" class="bt" value="暂停" onclick="s_c()" />
+            <input type="button" value="切换电脑" id="auto" style="width:80px; height:27px; margin-top:5px; font-weight:bold;" onclick="auto()" />
+            <input type="button" value="切换电脑" id="auto2" style="width:80px; height:27px; margin-top:5px; font-weight:bold; color:#093;" onclick="auto2()" />
+            <input type="button" id="fast" class="speedbt" value="加速(J)" onclick="fast()" />
+            <span style="width:60px;" id="speed">2</span>
+            <input type="button" id="slow" class="speedbt" value="减速(K)" onclick="slow()" /><br />
+            <input type="button" id="fast2" class="speedbt" style="background-color:#093;" value="加速(1)" onclick="fast2()" />
+            <span style="width:60px; color:#093;" id="speed2">2</span>
+            <input type="button" id="slow2" class="speedbt" style="background-color:#093;" value="减速(2)" onclick="slow2()" />
+            <input type="text" id="getkey" style="border:0px; height:2px;" readonly="readonly" />
+        </div>
+        <div style="width:200px; text-align:center;">
+            <input type="button" disabled="disabled" id="up" class="way" value="W" onclick="moveup()" /><br />
+            <input type="button" disabled="disabled" id="left" class="way" value="A" onclick="moveleft()" />
+            <input type="button" disabled="disabled" id="down" class="way" value="S" onclick="movedown()" />
+            <input type="button" disabled="disabled" id="right" class="way" value="D" onclick="moveright()" />
+        </div>
+        <div style="width:200px; text-align:center;">
+            <input type="button" disabled="disabled" id="up2" style="background-color:#093;" class="way" value="↑" onclick="moveup2()" /><br />
+            <input type="button" disabled="disabled" id="left2" style="background-color:#093;" class="way" value="←" onclick="moveleft2()" />
+            <input type="button" disabled="disabled" id="down2" style="background-color:#093;" class="way" value="↓" onclick="movedown2()" />
+            <input type="button" disabled="disabled" id="right2" style="background-color:#093;" class="way" value="→" onclick="moveright2()" />
+        </div>
+    </div>
+    <div style="clear:both;"></div>
+    <div id="point" style="width:604; font-size:36px; color:#F00; text-align:center; font-weight:bold;"></div>
+</div>
+</body>
+</html>

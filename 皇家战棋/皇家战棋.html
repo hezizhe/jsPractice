@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>皇家战棋</title>
+<style type="text/css">
+*{
+	margin:0;
+	padding:0;
+}
+ul{
+	float:left;
+}
+ul li{
+	width:100px;
+	height:100px;
+	list-style:none;
+	background-repeat:no-repeat;
+	background-position:center;
+}
+.unknown{background-image:url(unknown.png);}
+.ch0-1{background-image:url(red1.png);}
+.ch0-2{background-image:url(red2.png);}
+.ch0-3{background-image:url(red3.png);}
+.ch0-4{background-image:url(red4.png);}
+.ch0-5{background-image:url(red5.png);}
+.ch0-6{background-image:url(red6.png);}
+.ch1-1{background-image:url(blue1.png);}
+.ch1-2{background-image:url(blue2.png);}
+.ch1-3{background-image:url(blue3.png);}
+.ch1-4{background-image:url(blue4.png);}
+.ch1-5{background-image:url(blue5.png);}
+.ch1-6{background-image:url(blue6.png);}
+input{
+	font-size:24px;
+	font-weight:bold;
+	margin-top:10px;
+	height:50px;
+}
+</style>
+<script type="text/javascript">
+var chess=[];
+chess[0]=[0,0,0,6];chess[1]=[0,0,0,5];chess[2]=[0,0,0,4];chess[3]=[0,0,0,4];chess[4]=[0,0,0,3];chess[5]=[0,0,0,3];chess[6]=[0,0,0,2];chess[7]=[0,0,0,2];chess[8]=[0,0,0,2];chess[9]=[0,0,0,2];chess[10]=[0,0,0,1];chess[11]=[0,0,0,1];chess[12]=[0,0,0,1];chess[13]=[0,0,0,1];chess[14]=[0,0,0,1];chess[15]=[0,0,0,1];chess[16]=[0,0,0,1];chess[17]=[0,0,0,1];
+chess[18]=[0,0,1,6];chess[19]=[0,0,1,5];chess[20]=[0,0,1,4];chess[21]=[0,0,1,4];chess[22]=[0,0,1,3];chess[23]=[0,0,1,3];chess[24]=[0,0,1,2];chess[25]=[0,0,1,2];chess[26]=[0,0,1,2];chess[27]=[0,0,1,2];chess[28]=[0,0,1,1];chess[29]=[0,0,1,1];chess[30]=[0,0,1,1];chess[31]=[0,0,1,1];chess[32]=[0,0,1,1];chess[33]=[0,0,1,1];chess[34]=[0,0,1,1];chess[35]=[0,0,1,1];
+var cheaked=[9,9];
+var abledway=[];
+var step=0;
+var stepcount=1;
+var nofight=0;
+var timered=20; var timeblue=20;
+var timer; var timeb;
+var outtimered=0; var outtimeblue=0;
+var gameovers=false;
+var victoryr=0; var victoryb=0;
+function $(t,h){
+	return document.getElementById("t"+t+"h"+h);
+}
+function getcheck(){
+	for(var i=1;i<7;i++){
+		for(var j=1;j<7;j++){
+			if((i+j)%2==0){
+				$(i,j).style.backgroundColor="#333333";
+			}else{
+				$(i,j).style.backgroundColor="#FFF";
+			}
+		}
+	}
+}
+function fight(a,b){
+	if(a==1 && b==6){
+		return true;
+	}else if(a==6 && b==1){
+		return false;
+	}else{
+		if(a>=b){
+			return true;
+		}else{
+			return false;
+		}
+	}
+}
+function gameover(){
+	gameovers=true;
+	timered=20; timeblue=20;
+	window.clearInterval(timeb); window.clearInterval(timer);
+	outtimered=0; outtimeblue=0;
+	step=0; nofight=0;
+	if(abledway.length>0){
+		abledway.splice(0,abledway.length);
+	}
+	cheaked[0]=9; cheaked[1]=9;
+	document.getElementById("bluemove").innerHTML="";
+	document.getElementById("redmove").innerHTML="";
+	getcheck();
+	document.getElementById("redfirst").disabled="";
+	document.getElementById("bluefirst").disabled="";
+	document.getElementById("peace").disabled="disabled";
+	document.getElementById("redlose").disabled="disabled";
+	document.getElementById("bluelose").disabled="disabled";
+}
+function opening(){
+	gameovers=false;
+	for(var i=1;i<7;i++){
+		for(var j=1;j<7;j++){
+			$(i,j).className="";
+		}
+	}
+	document.getElementById("outtimered").innerHTML=outtimered;
+	document.getElementById("outtimeblue").innerHTML=outtimeblue;
+	document.getElementById("steps").innerHTML="00";
+	document.getElementById("reds").innerHTML=18;
+	document.getElementById("blues").innerHTML=18;
+	document.getElementById("timered").innerHTML=20;
+	document.getElementById("timeblue").innerHTML=20;
+	for(var i=0;i<chess.length;i++){
+		var flag=false;
+		do{
+			chess[i][0]=Math.floor(Math.random()*6)+1;
+			chess[i][1]=Math.floor(Math.random()*6)+1;
+			if($(chess[i][0],chess[i][1]).className==""){
+				flag=true;
+				$(chess[i][0],chess[i][1]).className="unknown";
+			}
+		}while(!flag);
+	}
+	document.getElementById("redfirst").disabled="disabled";
+	document.getElementById("bluefirst").disabled="disabled";
+	document.getElementById("opening").disabled="disabled";
+	if(step%2==0){
+		timer=setInterval("timerun('red')",1000);
+	}else{
+		timeb=setInterval("timerun('blue')",1000);
+	}
+}
+function moveable(t,h,tt,hh){
+	var cheakedch=$(t,h).className.split("-");
+	var movech=$(tt,hh).className.split("-");
+	if($(tt,hh).className=="unknown"){
+		$(tt,hh).style.backgroundColor="#F00";
+	}else if($(tt,hh).className==""){
+		$(tt,hh).style.backgroundColor="#0F0";
+		abledway[abledway.length]=[tt,hh];
+	}else if(cheakedch[0]==movech[0]){
+		$(tt,hh).style.backgroundColor="#F00";
+	}else if(fight(cheakedch[1],movech[1])){
+		$(tt,hh).style.backgroundColor="#0F0";
+		abledway[abledway.length]=[tt,hh];
+	}else{
+		$(tt,hh).style.backgroundColor="#F00";
+	}
+}
+function getsurvive(){
+	var reds=0; var blues=0;
+	for(var i=0;i<chess.length;i++){
+		if(chess[i][0]!=0){
+			if(chess[i][2]==0){
+				reds++;
+			}else{
+				blues++;
+			}
+		}
+	}
+	document.getElementById("reds").innerHTML=reds;
+	document.getElementById("blues").innerHTML=blues;
+	if(reds==0){
+		victoryb++;
+		document.getElementById("victoryb").innerHTML=victoryb;
+		alert("红方全军覆没，蓝方胜利！");
+		gameover();
+	}
+	if(blues==0){
+		victoryr++;
+		document.getElementById("victoryr").innerHTML=victoryr;
+		alert("蓝方全军覆没，红方胜利！");
+		gameover();
+	}
+}
+function timerun(colour){
+	if(colour=="red"){
+		if(timered==0){
+			timered=20;
+			outtimered++;
+			document.getElementById("outtimered").innerHTML=outtimered;
+			if(outtimered==5){
+				victoryb++;
+				document.getElementById("victoryb").innerHTML=victoryb;
+				alert("红方超时，蓝方胜！");
+				gameover();
+			}
+		}else{
+			timered--;
+		}
+		document.getElementById("timered").innerHTML=timered;
+	}else{
+		if(timeblue==0){
+			timeblue=20;
+			outtimeblue++;
+			document.getElementById("outtimeblue").innerHTML=outtimeblue;
+			if(outtimeblue==5){
+				victoryr++;
+				document.getElementById("victoryr").innerHTML=victoryr;
+				alert("蓝方超时，红方胜！");
+				gameover();
+			}
+		}else{
+			timeblue--;
+		}
+		document.getElementById("timeblue").innerHTML=timeblue;
+	}
+}
+function active(t,h){
+	var nowmove="ch"+(step%2);
+	var moved=false;
+	if(gameovers){
+		return;
+	}
+	if(cheaked[0]==9 && cheaked[1]==9){
+		if($(t,h).className=="unknown"){
+			for(var i=0;i<chess.length;i++){
+				if(chess[i][0]==t && chess[i][1]==h){
+					$(t,h).className="ch"+chess[i][2]+"-"+chess[i][3];
+				}
+			}
+			nofight=0;
+			moved=true;
+		}else if($(t,h).className!=""){
+			var cheakedch=$(t,h).className.split("-");
+			if(cheakedch[0]==nowmove){
+				cheaked[0]=t;  cheaked[1]=h;
+				$(t,h).style.backgroundColor="#FF0";
+				if(t<6){
+					moveable(t,h,t+1,h);
+				}
+				if(t>1){
+					moveable(t,h,t-1,h);
+				}
+				if(h<6){
+					moveable(t,h,t,h+1);
+				}
+				if(h>1){
+					moveable(t,h,t,h-1);
+				}
+				if(abledway.length==0){
+					cheaked[0]=9; cheaked[1]=9;
+					window.setTimeout("getcheck()",300);
+				}
+			}
+		}
+	}else{
+		var canmove=false;
+		for(var i=0;i<abledway.length;i++){
+			if(abledway[i][0]==t && abledway[i][1]==h){
+				canmove=true;
+			}
+		}
+		if(canmove){
+			if($(t,h).className!=""){
+				for(var i=0;i<chess.length;i++){
+					if(chess[i][0]==t && chess[i][1]==h){
+						chess[i][0]=0;
+						chess[i][1]=0;
+					}
+				}
+				nofight=0;
+			}else{
+				nofight++;
+			}
+			for(var i=0;i<chess.length;i++){
+				if(chess[i][0]==cheaked[0] && chess[i][1]==cheaked[1]){
+					chess[i][0]=t; chess[i][1]=h;
+				}
+			}
+			$(t,h).className=$(cheaked[0],cheaked[1]).className;
+			$(cheaked[0],cheaked[1]).className="";
+			moved=true;
+		}
+		abledway.splice(0,abledway.length);
+		cheaked[0]=9; cheaked[1]=9;
+		window.setTimeout("getcheck()",200);
+	}
+	if(moved){
+		getsurvive();
+		step++;
+		if(nofight>=30){
+			alert("胜负未分，平局！");
+			gameover();
+		}
+		if(nowmove=="ch0"){
+			document.getElementById("redmove").innerHTML="";
+			document.getElementById("bluemove").innerHTML="蓝方行动！";
+			window.clearInterval(timer);
+			timered=20;
+			document.getElementById("timered").innerHTML=timered;
+			timeb=setInterval("timerun('blue')",1000);
+		}else{
+			document.getElementById("bluemove").innerHTML="";
+			document.getElementById("redmove").innerHTML="红方行动！";
+			window.clearInterval(timeb);
+			timeblue=20;
+			document.getElementById("timeblue").innerHTML=timeblue;
+			timer=setInterval("timerun('red')",1000);
+		}
+		if(stepcount==1){
+			if(step==30){
+				document.getElementById("peace").disabled="";
+			}
+			if(step<10){
+				document.getElementById("steps").innerHTML="0"+step;
+			}else if(step==10){
+				document.getElementById("redlose").disabled="";
+				document.getElementById("bluelose").disabled="";
+			}else{
+				document.getElementById("steps").innerHTML=step;
+				document.getElementById("redlose").disabled="";
+				document.getElementById("bluelose").disabled="";
+			}
+		}else{
+			if(step==31){
+				document.getElementById("peace").disabled="";
+			}
+			if(step<11){
+				document.getElementById("steps").innerHTML="0"+(step-1);
+			}else if(step==11){
+				document.getElementById("redlose").disabled="";
+				document.getElementById("bluelose").disabled="";
+			}else{
+				document.getElementById("steps").innerHTML=step-1;
+			}
+		}
+	}
+}
+function redfirst(){
+	step=0; stepcount=1;
+	document.getElementById("bluemove").innerHTML="";
+	document.getElementById("redmove").innerHTML="红方行动！";
+	document.getElementById("opening").disabled="";
+}
+function bluefirst(){
+	step=1; stepcount=-1;
+	document.getElementById("redmove").innerHTML="";
+	document.getElementById("bluemove").innerHTML="蓝方行动！";
+	document.getElementById("opening").disabled="";
+}
+function peace(){
+	if(confirm("红方是否同意求和？")){
+		if(confirm("蓝方是否同意求和？")){
+			gameover();
+		}
+	}
+}
+function redlose(){
+	if(confirm("红方是否确定认输？")){
+		victoryb++;
+		document.getElementById("victoryb").innerHTML=victoryb;
+		gameover();
+	}
+}
+function bluelose(){
+	if(confirm("蓝方是否确定认输？")){
+		victoryr++;
+		document.getElementById("victoryr").innerHTML=victoryr;
+		gameover();
+	}
+}
+</script>
+</head>
+
+<body onload="getcheck()">
+<div style="width:1015px; margin:0 auto;">
+	<div style="width:200px; height:670px; float:left; font-size:22px; line-height:40px; background-color:rgba(239,74,76,1.00);">
+        <div style="margin-left:10px;">
+            <div style="width:0px; height:90px; margin-left:20px; margin-top:30px; margin-bottom:30px;"><img src="red6.png" /></div>
+            剩余棋子：<span id="reds">18</span><br />
+            剩余时间：<span id="timered">20</span>秒<br />
+            超时次数:<span id="outtimered">0</span>/5<br />
+            胜利次数:<span id="victoryr">0</span><br /><br />
+            <span id="redmove" style="font-size:28px; font-weight:bolder; color:rgba(252,251,251,1.00);"></span><br />
+			<input type="button" id="redlose" style="width:180px; background-color:rgba(248,245,245,1.00); margin-top:40px;" value="认输" disabled="disabled" onclick="redlose()" />
+        </div>
+    </div>
+    <div style="width:600px; height:670px; float:left;">
+        <div style="width:600px; height:600px;">
+            <ul>
+                <li id="t1h1" onclick="active(1,1)"></li>
+                <li id="t1h2" onclick="active(1,2)"></li>
+                <li id="t1h3" onclick="active(1,3)"></li>
+                <li id="t1h4" onclick="active(1,4)"></li>
+                <li id="t1h5" onclick="active(1,5)"></li>
+                <li id="t1h6" onclick="active(1,6)"></li>
+            </ul>
+            <ul>
+                <li id="t2h1" onclick="active(2,1)"></li>
+                <li id="t2h2" onclick="active(2,2)"></li>
+                <li id="t2h3" onclick="active(2,3)"></li>
+                <li id="t2h4" onclick="active(2,4)"></li>
+                <li id="t2h5" onclick="active(2,5)"></li>
+                <li id="t2h6" onclick="active(2,6)"></li>
+            </ul>
+            <ul>
+                <li id="t3h1" onclick="active(3,1)"></li>
+                <li id="t3h2" onclick="active(3,2)"></li>
+                <li id="t3h3" onclick="active(3,3)"></li>
+                <li id="t3h4" onclick="active(3,4)"></li>
+                <li id="t3h5" onclick="active(3,5)"></li>
+                <li id="t3h6" onclick="active(3,6)"></li>
+            </ul>
+            <ul>
+                <li id="t4h1" onclick="active(4,1)"></li>
+                <li id="t4h2" onclick="active(4,2)"></li>
+                <li id="t4h3" onclick="active(4,3)"></li>
+                <li id="t4h4" onclick="active(4,4)"></li>
+                <li id="t4h5" onclick="active(4,5)"></li>
+                <li id="t4h6" onclick="active(4,6)"></li>
+            </ul>
+            <ul>
+                <li id="t5h1" onclick="active(5,1)"></li>
+                <li id="t5h2" onclick="active(5,2)"></li>
+                <li id="t5h3" onclick="active(5,3)"></li>
+                <li id="t5h4" onclick="active(5,4)"></li>
+                <li id="t5h5" onclick="active(5,5)"></li>
+                <li id="t5h6" onclick="active(5,6)"></li>
+            </ul>
+            <ul>
+                <li id="t6h1" onclick="active(6,1)"></li>
+                <li id="t6h2" onclick="active(6,2)"></li>
+                <li id="t6h3" onclick="active(6,3)"></li>
+                <li id="t6h4" onclick="active(6,4)"></li>
+                <li id="t6h5" onclick="active(6,5)"></li>
+                <li id="t6h6" onclick="active(6,6)"></li>
+            </ul>
+        </div>
+        <div style="width:600px; height:70px; background-color:rgba(47,241,141,1.00); text-align:center;">
+            <input style="width:130px;" type="button" id="redfirst" value="红方先行" onclick="redfirst()" />
+            <input style="width:80px;" type="button" id="opening" value="开局" disabled="disabled" onclick="opening()" />
+            <span style="font-size:30px; margin:10px 30px; font-weight:bolder;" id="steps">00</span>
+            <input style="width:80px;" type="button" id="peace" disabled="disabled" value="求和" onclick="peace()" />
+            <input style="width:130px;" type="button" id="bluefirst" value="蓝方先行" onclick="bluefirst()" />
+        </div>
+    </div>
+    <div style="width:200px; height:670px; float:left; font-size:22px; line-height:40px; background-color:rgba(65,193,239,1.00);">
+    	<div style="margin-left:10px;">
+            <div style="width:0px; height:90px; margin-left:20px; margin-top:30px; margin-bottom:30px;"><img src="blue6.png" /></div>
+            剩余棋子：<span id="blues">18</span><br />
+            剩余时间：<span id="timeblue">20</span>秒<br />
+            超时次数:<span id="outtimeblue">0</span>/5<br />
+            胜利次数:<span id="victoryb">0</span><br /><br />
+            <span id="bluemove" style="font-size:28px; font-weight:bolder; color:rgba(2,7,231,1.00);"></span><br />
+            <input type="button" id="bluelose" style="width:180px; background-color:rgba(248,245,245,1.00); margin-top:40px;" value="认输" disabled="disabled" onclick="bluelose()" />
+        </div>
+    </div>
+    <div>
+    	<img src="ruler.png" />
+    </div>
+</div>
+
+
+</body>
+</html>

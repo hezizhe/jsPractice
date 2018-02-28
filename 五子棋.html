@@ -1,0 +1,525 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>五子棋</title>
+<style type="text/css">
+*{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+ul{
+	float:left;
+	margin-left:10px;
+}
+ul li{
+	background-color:#CCF;
+	width:20px;
+	height:20px;
+	border-radius:20px;
+	position:relative;
+	top:-590px;
+	left:10px;
+	margin-top:10px;
+	opacity:0;
+}
+.black{
+	background-color:#000;
+	opacity:1;
+}
+.white{
+	background-color:#FFF;
+	opacity:1;
+}
+</style>
+<script type="text/javascript">
+var step=0;
+var gameover=false;
+function $(t,h){
+	if(t>0 && h>0 && t<20 && h<20){
+		return document.getElementById("t"+t+"h"+h);
+	}else{
+		return document.getElementById("tab");
+	}
+}
+function victory(t,h,color){
+	//西北走向连子胜利
+	if($(t,h).className==color && $(t-1,h-1).className==color && $(t-2,h-2).className==color && $(t-3,h-3).className==color && $(t-4,h-4).className==color){return true;}
+	if($(t,h).className==color && $(t-1,h-1).className==color && $(t-2,h-2).className==color && $(t-3,h-3).className==color && $(t+1,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t-1,h-1).className==color && $(t-2,h-2).className==color && $(t+2,h+2).className==color && $(t+1,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t-1,h-1).className==color && $(t+3,h+3).className==color && $(t+2,h+2).className==color && $(t+1,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t+4,h+4).className==color && $(t+3,h+3).className==color && $(t+2,h+2).className==color && $(t+1,h+1).className==color){return true;}
+	//东北走向连子胜利
+	if($(t,h).className==color && $(t+1,h-1).className==color && $(t+2,h-2).className==color && $(t+3,h-3).className==color && $(t+4,h-4).className==color){return true;}
+	if($(t,h).className==color && $(t+1,h-1).className==color && $(t+2,h-2).className==color && $(t+3,h-3).className==color && $(t-1,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t+1,h-1).className==color && $(t+2,h-2).className==color && $(t-2,h+2).className==color && $(t-1,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t+1,h-1).className==color && $(t-3,h+3).className==color && $(t-2,h+2).className==color && $(t-1,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t-4,h+4).className==color && $(t-3,h+3).className==color && $(t-2,h+2).className==color && $(t-1,h+1).className==color){return true;}
+	//横向连子胜利
+	if($(t,h).className==color && $(t-1,h).className==color && $(t-2,h).className==color && $(t-3,h).className==color && $(t-4,h).className==color){return true;}
+	if($(t,h).className==color && $(t-1,h).className==color && $(t-2,h).className==color && $(t-3,h).className==color && $(t+1,h).className==color){return true;}
+	if($(t,h).className==color && $(t-1,h).className==color && $(t-2,h).className==color && $(t+2,h).className==color && $(t+1,h).className==color){return true;}
+	if($(t,h).className==color && $(t-1,h).className==color && $(t+3,h).className==color && $(t+2,h).className==color && $(t+1,h).className==color){return true;}
+	if($(t,h).className==color && $(t+4,h).className==color && $(t+3,h).className==color && $(t+2,h).className==color && $(t+1,h).className==color){return true;}
+	//竖向连子胜利
+	if($(t,h).className==color && $(t,h-1).className==color && $(t,h-2).className==color && $(t,h-3).className==color && $(t,h-4).className==color){return true;}
+	if($(t,h).className==color && $(t,h-1).className==color && $(t,h-2).className==color && $(t,h-3).className==color && $(t,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t,h-1).className==color && $(t,h-2).className==color && $(t,h+2).className==color && $(t,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t,h-1).className==color && $(t,h+3).className==color && $(t,h+2).className==color && $(t,h+1).className==color){return true;}
+	if($(t,h).className==color && $(t,h+4).className==color && $(t,h+3).className==color && $(t,h+2).className==color && $(t,h+1).className==color){return true;}
+}
+function active(t,h){
+	if(gameover==true){
+		if(confirm("胜负已分！是否再战？")){
+			gameover=false;
+			window.location.reload();
+		}
+		return;
+	}
+	if($(t,h).className==""){
+		step++;
+		if(step%2==1){
+			$(t,h).className="black";
+		}else{
+			$(t,h).className="white";
+		}
+	}
+	if(victory(t,h,"black")){
+		alert("第"+step+"步棋，黑子胜！");
+		gameover=true;
+	}
+	if(victory(t,h,"white")){
+		alert("第"+step+"步棋，白子胜！");
+		gameover=true;
+	}
+}
+</script>
+</head>
+
+<body>
+<div style="width:600px; margin:0 auto;" >
+	<table id="tab" border="1" width="600px" height="600px" cellpadding="0" cellspacing="0" bgcolor="#CC9933">
+    	<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+    <ul>
+    	<li id="t1h1" onclick="active(1,1)"></li>
+        <li id="t1h2" onclick="active(1,2)"></li>
+        <li id="t1h3" onclick="active(1,3)"></li>
+        <li id="t1h4" onclick="active(1,4)"></li>
+        <li id="t1h5" onclick="active(1,5)"></li>
+        <li id="t1h6" onclick="active(1,6)"></li>
+        <li id="t1h7" onclick="active(1,7)"></li>
+        <li id="t1h8" onclick="active(1,8)"></li>
+        <li id="t1h9" onclick="active(1,9)"></li>
+        <li id="t1h10" onclick="active(1,10)"></li>
+        <li id="t1h11" onclick="active(1,11)"></li>
+        <li id="t1h12" onclick="active(1,12)"></li>
+        <li id="t1h13" onclick="active(1,13)"></li>
+        <li id="t1h14" onclick="active(1,14)"></li>
+        <li id="t1h15" onclick="active(1,15)"></li>
+        <li id="t1h16" onclick="active(1,16)"></li>
+        <li id="t1h17" onclick="active(1,17)"></li>
+        <li id="t1h18" onclick="active(1,18)"></li>
+        <li id="t1h19" onclick="active(1,19)"></li>
+    </ul>
+    <ul>
+    	<li id="t2h1" onclick="active(2,1)"></li>
+        <li id="t2h2" onclick="active(2,2)"></li>
+        <li id="t2h3" onclick="active(2,3)"></li>
+        <li id="t2h4" onclick="active(2,4)"></li>
+        <li id="t2h5" onclick="active(2,5)"></li>
+        <li id="t2h6" onclick="active(2,6)"></li>
+        <li id="t2h7" onclick="active(2,7)"></li>
+        <li id="t2h8" onclick="active(2,8)"></li>
+        <li id="t2h9" onclick="active(2,9)"></li>
+        <li id="t2h10" onclick="active(2,10)"></li>
+        <li id="t2h11" onclick="active(2,11)"></li>
+        <li id="t2h12" onclick="active(2,12)"></li>
+        <li id="t2h13" onclick="active(2,13)"></li>
+        <li id="t2h14" onclick="active(2,14)"></li>
+        <li id="t2h15" onclick="active(2,15)"></li>
+        <li id="t2h16" onclick="active(2,16)"></li>
+        <li id="t2h17" onclick="active(2,17)"></li>
+        <li id="t2h18" onclick="active(2,18)"></li>
+        <li id="t2h19" onclick="active(2,19)"></li>
+    </ul>
+    <ul>
+    	<li id="t3h1" onclick="active(3,1)"></li>
+        <li id="t3h2" onclick="active(3,2)"></li>
+        <li id="t3h3" onclick="active(3,3)"></li>
+        <li id="t3h4" onclick="active(3,4)"></li>
+        <li id="t3h5" onclick="active(3,5)"></li>
+        <li id="t3h6" onclick="active(3,6)"></li>
+        <li id="t3h7" onclick="active(3,7)"></li>
+        <li id="t3h8" onclick="active(3,8)"></li>
+        <li id="t3h9" onclick="active(3,9)"></li>
+        <li id="t3h10" onclick="active(3,10)"></li>
+        <li id="t3h11" onclick="active(3,11)"></li>
+        <li id="t3h12" onclick="active(3,12)"></li>
+        <li id="t3h13" onclick="active(3,13)"></li>
+        <li id="t3h14" onclick="active(3,14)"></li>
+        <li id="t3h15" onclick="active(3,15)"></li>
+        <li id="t3h16" onclick="active(3,16)"></li>
+        <li id="t3h17" onclick="active(3,17)"></li>
+        <li id="t3h18" onclick="active(3,18)"></li>
+        <li id="t3h19" onclick="active(3,19)"></li>
+    </ul>
+    <ul>
+    	<li id="t4h1" onclick="active(4,1)"></li>
+        <li id="t4h2" onclick="active(4,2)"></li>
+        <li id="t4h3" onclick="active(4,3)"></li>
+        <li id="t4h4" onclick="active(4,4)"></li>
+        <li id="t4h5" onclick="active(4,5)"></li>
+        <li id="t4h6" onclick="active(4,6)"></li>
+        <li id="t4h7" onclick="active(4,7)"></li>
+        <li id="t4h8" onclick="active(4,8)"></li>
+        <li id="t4h9" onclick="active(4,9)"></li>
+        <li id="t4h10" onclick="active(4,10)"></li>
+        <li id="t4h11" onclick="active(4,11)"></li>
+        <li id="t4h12" onclick="active(4,12)"></li>
+        <li id="t4h13" onclick="active(4,13)"></li>
+        <li id="t4h14" onclick="active(4,14)"></li>
+        <li id="t4h15" onclick="active(4,15)"></li>
+        <li id="t4h16" onclick="active(4,16)"></li>
+        <li id="t4h17" onclick="active(4,17)"></li>
+        <li id="t4h18" onclick="active(4,18)"></li>
+        <li id="t4h19" onclick="active(4,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t5h1" onclick="active(5,1)"></li>
+        <li id="t5h2" onclick="active(5,2)"></li>
+        <li id="t5h3" onclick="active(5,3)"></li>
+        <li id="t5h4" onclick="active(5,4)"></li>
+        <li id="t5h5" onclick="active(5,5)"></li>
+        <li id="t5h6" onclick="active(5,6)"></li>
+        <li id="t5h7" onclick="active(5,7)"></li>
+        <li id="t5h8" onclick="active(5,8)"></li>
+        <li id="t5h9" onclick="active(5,9)"></li>
+        <li id="t5h10" onclick="active(5,10)"></li>
+        <li id="t5h11" onclick="active(5,11)"></li>
+        <li id="t5h12" onclick="active(5,12)"></li>
+        <li id="t5h13" onclick="active(5,13)"></li>
+        <li id="t5h14" onclick="active(5,14)"></li>
+        <li id="t5h15" onclick="active(5,15)"></li>
+        <li id="t5h16" onclick="active(5,16)"></li>
+        <li id="t5h17" onclick="active(5,17)"></li>
+        <li id="t5h18" onclick="active(5,18)"></li>
+        <li id="t5h19" onclick="active(5,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t6h1" onclick="active(6,1)"></li>
+        <li id="t6h2" onclick="active(6,2)"></li>
+        <li id="t6h3" onclick="active(6,3)"></li>
+        <li id="t6h4" onclick="active(6,4)"></li>
+        <li id="t6h5" onclick="active(6,5)"></li>
+        <li id="t6h6" onclick="active(6,6)"></li>
+        <li id="t6h7" onclick="active(6,7)"></li>
+        <li id="t6h8" onclick="active(6,8)"></li>
+        <li id="t6h9" onclick="active(6,9)"></li>
+        <li id="t6h10" onclick="active(6,10)"></li>
+        <li id="t6h11" onclick="active(6,11)"></li>
+        <li id="t6h12" onclick="active(6,12)"></li>
+        <li id="t6h13" onclick="active(6,13)"></li>
+        <li id="t6h14" onclick="active(6,14)"></li>
+        <li id="t6h15" onclick="active(6,15)"></li>
+        <li id="t6h16" onclick="active(6,16)"></li>
+        <li id="t6h17" onclick="active(6,17)"></li>
+        <li id="t6h18" onclick="active(6,18)"></li>
+        <li id="t6h19" onclick="active(6,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t7h1" onclick="active(7,1)"></li>
+        <li id="t7h2" onclick="active(7,2)"></li>
+        <li id="t7h3" onclick="active(7,3)"></li>
+        <li id="t7h4" onclick="active(7,4)"></li>
+        <li id="t7h5" onclick="active(7,5)"></li>
+        <li id="t7h6" onclick="active(7,6)"></li>
+        <li id="t7h7" onclick="active(7,7)"></li>
+        <li id="t7h8" onclick="active(7,8)"></li>
+        <li id="t7h9" onclick="active(7,9)"></li>
+        <li id="t7h10" onclick="active(7,10)"></li>
+        <li id="t7h11" onclick="active(7,11)"></li>
+        <li id="t7h12" onclick="active(7,12)"></li>
+        <li id="t7h13" onclick="active(7,13)"></li>
+        <li id="t7h14" onclick="active(7,14)"></li>
+        <li id="t7h15" onclick="active(7,15)"></li>
+        <li id="t7h16" onclick="active(7,16)"></li>
+        <li id="t7h17" onclick="active(7,17)"></li>
+        <li id="t7h18" onclick="active(7,18)"></li>
+        <li id="t7h19" onclick="active(7,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t8h1" onclick="active(8,1)"></li>
+        <li id="t8h2" onclick="active(8,2)"></li>
+        <li id="t8h3" onclick="active(8,3)"></li>
+        <li id="t8h4" onclick="active(8,4)"></li>
+        <li id="t8h5" onclick="active(8,5)"></li>
+        <li id="t8h6" onclick="active(8,6)"></li>
+        <li id="t8h7" onclick="active(8,7)"></li>
+        <li id="t8h8" onclick="active(8,8)"></li>
+        <li id="t8h9" onclick="active(8,9)"></li>
+        <li id="t8h10" onclick="active(8,10)"></li>
+        <li id="t8h11" onclick="active(8,11)"></li>
+        <li id="t8h12" onclick="active(8,12)"></li>
+        <li id="t8h13" onclick="active(8,13)"></li>
+        <li id="t8h14" onclick="active(8,14)"></li>
+        <li id="t8h15" onclick="active(8,15)"></li>
+        <li id="t8h16" onclick="active(8,16)"></li>
+        <li id="t8h17" onclick="active(8,17)"></li>
+        <li id="t8h18" onclick="active(8,18)"></li>
+        <li id="t8h19" onclick="active(8,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t9h1" onclick="active(9,1)"></li>
+        <li id="t9h2" onclick="active(9,2)"></li>
+        <li id="t9h3" onclick="active(9,3)"></li>
+        <li id="t9h4" onclick="active(9,4)"></li>
+        <li id="t9h5" onclick="active(9,5)"></li>
+        <li id="t9h6" onclick="active(9,6)"></li>
+        <li id="t9h7" onclick="active(9,7)"></li>
+        <li id="t9h8" onclick="active(9,8)"></li>
+        <li id="t9h9" onclick="active(9,9)"></li>
+        <li id="t9h10" onclick="active(9,10)"></li>
+        <li id="t9h11" onclick="active(9,11)"></li>
+        <li id="t9h12" onclick="active(9,12)"></li>
+        <li id="t9h13" onclick="active(9,13)"></li>
+        <li id="t9h14" onclick="active(9,14)"></li>
+        <li id="t9h15" onclick="active(9,15)"></li>
+        <li id="t9h16" onclick="active(9,16)"></li>
+        <li id="t9h17" onclick="active(9,17)"></li>
+        <li id="t9h18" onclick="active(9,18)"></li>
+        <li id="t9h19" onclick="active(9,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t10h1" onclick="active(10,1)"></li>
+        <li id="t10h2" onclick="active(10,2)"></li>
+        <li id="t10h3" onclick="active(10,3)"></li>
+        <li id="t10h4" onclick="active(10,4)"></li>
+        <li id="t10h5" onclick="active(10,5)"></li>
+        <li id="t10h6" onclick="active(10,6)"></li>
+        <li id="t10h7" onclick="active(10,7)"></li>
+        <li id="t10h8" onclick="active(10,8)"></li>
+        <li id="t10h9" onclick="active(10,9)"></li>
+        <li id="t10h10" onclick="active(10,10)"></li>
+        <li id="t10h11" onclick="active(10,11)"></li>
+        <li id="t10h12" onclick="active(10,12)"></li>
+        <li id="t10h13" onclick="active(10,13)"></li>
+        <li id="t10h14" onclick="active(10,14)"></li>
+        <li id="t10h15" onclick="active(10,15)"></li>
+        <li id="t10h16" onclick="active(10,16)"></li>
+        <li id="t10h17" onclick="active(10,17)"></li>
+        <li id="t10h18" onclick="active(10,18)"></li>
+        <li id="t10h19" onclick="active(10,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t11h1" onclick="active(11,1)"></li>
+        <li id="t11h2" onclick="active(11,2)"></li>
+        <li id="t11h3" onclick="active(11,3)"></li>
+        <li id="t11h4" onclick="active(11,4)"></li>
+        <li id="t11h5" onclick="active(11,5)"></li>
+        <li id="t11h6" onclick="active(11,6)"></li>
+        <li id="t11h7" onclick="active(11,7)"></li>
+        <li id="t11h8" onclick="active(11,8)"></li>
+        <li id="t11h9" onclick="active(11,9)"></li>
+        <li id="t11h10" onclick="active(11,10)"></li>
+        <li id="t11h11" onclick="active(11,11)"></li>
+        <li id="t11h12" onclick="active(11,12)"></li>
+        <li id="t11h13" onclick="active(11,13)"></li>
+        <li id="t11h14" onclick="active(11,14)"></li>
+        <li id="t11h15" onclick="active(11,15)"></li>
+        <li id="t11h16" onclick="active(11,16)"></li>
+        <li id="t11h17" onclick="active(11,17)"></li>
+        <li id="t11h18" onclick="active(11,18)"></li>
+        <li id="t11h19" onclick="active(11,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t12h1" onclick="active(12,1)"></li>
+        <li id="t12h2" onclick="active(12,2)"></li>
+        <li id="t12h3" onclick="active(12,3)"></li>
+        <li id="t12h4" onclick="active(12,4)"></li>
+        <li id="t12h5" onclick="active(12,5)"></li>
+        <li id="t12h6" onclick="active(12,6)"></li>
+        <li id="t12h7" onclick="active(12,7)"></li>
+        <li id="t12h8" onclick="active(12,8)"></li>
+        <li id="t12h9" onclick="active(12,9)"></li>
+        <li id="t12h10" onclick="active(12,10)"></li>
+        <li id="t12h11" onclick="active(12,11)"></li>
+        <li id="t12h12" onclick="active(12,12)"></li>
+        <li id="t12h13" onclick="active(12,13)"></li>
+        <li id="t12h14" onclick="active(12,14)"></li>
+        <li id="t12h15" onclick="active(12,15)"></li>
+        <li id="t12h16" onclick="active(12,16)"></li>
+        <li id="t12h17" onclick="active(12,17)"></li>
+        <li id="t12h18" onclick="active(12,18)"></li>
+        <li id="t12h19" onclick="active(12,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t13h1" onclick="active(13,1)"></li>
+        <li id="t13h2" onclick="active(13,2)"></li>
+        <li id="t13h3" onclick="active(13,3)"></li>
+        <li id="t13h4" onclick="active(13,4)"></li>
+        <li id="t13h5" onclick="active(13,5)"></li>
+        <li id="t13h6" onclick="active(13,6)"></li>
+        <li id="t13h7" onclick="active(13,7)"></li>
+        <li id="t13h8" onclick="active(13,8)"></li>
+        <li id="t13h9" onclick="active(13,9)"></li>
+        <li id="t13h10" onclick="active(13,10)"></li>
+        <li id="t13h11" onclick="active(13,11)"></li>
+        <li id="t13h12" onclick="active(13,12)"></li>
+        <li id="t13h13" onclick="active(13,13)"></li>
+        <li id="t13h14" onclick="active(13,14)"></li>
+        <li id="t13h15" onclick="active(13,15)"></li>
+        <li id="t13h16" onclick="active(13,16)"></li>
+        <li id="t13h17" onclick="active(13,17)"></li>
+        <li id="t13h18" onclick="active(13,18)"></li>
+        <li id="t13h19" onclick="active(13,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t14h1" onclick="active(14,1)"></li>
+        <li id="t14h2" onclick="active(14,2)"></li>
+        <li id="t14h3" onclick="active(14,3)"></li>
+        <li id="t14h4" onclick="active(14,4)"></li>
+        <li id="t14h5" onclick="active(14,5)"></li>
+        <li id="t14h6" onclick="active(14,6)"></li>
+        <li id="t14h7" onclick="active(14,7)"></li>
+        <li id="t14h8" onclick="active(14,8)"></li>
+        <li id="t14h9" onclick="active(14,9)"></li>
+        <li id="t14h10" onclick="active(14,10)"></li>
+        <li id="t14h11" onclick="active(14,11)"></li>
+        <li id="t14h12" onclick="active(14,12)"></li>
+        <li id="t14h13" onclick="active(14,13)"></li>
+        <li id="t14h14" onclick="active(14,14)"></li>
+        <li id="t14h15" onclick="active(14,15)"></li>
+        <li id="t14h16" onclick="active(14,16)"></li>
+        <li id="t14h17" onclick="active(14,17)"></li>
+        <li id="t14h18" onclick="active(14,18)"></li>
+        <li id="t14h19" onclick="active(14,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t15h1" onclick="active(15,1)"></li>
+        <li id="t15h2" onclick="active(15,2)"></li>
+        <li id="t15h3" onclick="active(15,3)"></li>
+        <li id="t15h4" onclick="active(15,4)"></li>
+        <li id="t15h5" onclick="active(15,5)"></li>
+        <li id="t15h6" onclick="active(15,6)"></li>
+        <li id="t15h7" onclick="active(15,7)"></li>
+        <li id="t15h8" onclick="active(15,8)"></li>
+        <li id="t15h9" onclick="active(15,9)"></li>
+        <li id="t15h10" onclick="active(15,10)"></li>
+        <li id="t15h11" onclick="active(15,11)"></li>
+        <li id="t15h12" onclick="active(15,12)"></li>
+        <li id="t15h13" onclick="active(15,13)"></li>
+        <li id="t15h14" onclick="active(15,14)"></li>
+        <li id="t15h15" onclick="active(15,15)"></li>
+        <li id="t15h16" onclick="active(15,16)"></li>
+        <li id="t15h17" onclick="active(15,17)"></li>
+        <li id="t15h18" onclick="active(15,18)"></li>
+        <li id="t15h19" onclick="active(15,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t16h1" onclick="active(16,1)"></li>
+        <li id="t16h2" onclick="active(16,2)"></li>
+        <li id="t16h3" onclick="active(16,3)"></li>
+        <li id="t16h4" onclick="active(16,4)"></li>
+        <li id="t16h5" onclick="active(16,5)"></li>
+        <li id="t16h6" onclick="active(16,6)"></li>
+        <li id="t16h7" onclick="active(16,7)"></li>
+        <li id="t16h8" onclick="active(16,8)"></li>
+        <li id="t16h9" onclick="active(16,9)"></li>
+        <li id="t16h10" onclick="active(16,10)"></li>
+        <li id="t16h11" onclick="active(16,11)"></li>
+        <li id="t16h12" onclick="active(16,12)"></li>
+        <li id="t16h13" onclick="active(16,13)"></li>
+        <li id="t16h14" onclick="active(16,14)"></li>
+        <li id="t16h15" onclick="active(16,15)"></li>
+        <li id="t16h16" onclick="active(16,16)"></li>
+        <li id="t16h17" onclick="active(16,17)"></li>
+        <li id="t16h18" onclick="active(16,18)"></li>
+        <li id="t16h19" onclick="active(16,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t17h1" onclick="active(17,1)"></li>
+        <li id="t17h2" onclick="active(17,2)"></li>
+        <li id="t17h3" onclick="active(17,3)"></li>
+        <li id="t17h4" onclick="active(17,4)"></li>
+        <li id="t17h5" onclick="active(17,5)"></li>
+        <li id="t17h6" onclick="active(17,6)"></li>
+        <li id="t17h7" onclick="active(17,7)"></li>
+        <li id="t17h8" onclick="active(17,8)"></li>
+        <li id="t17h9" onclick="active(17,9)"></li>
+        <li id="t17h10" onclick="active(17,10)"></li>
+        <li id="t17h11" onclick="active(17,11)"></li>
+        <li id="t17h12" onclick="active(17,12)"></li>
+        <li id="t17h13" onclick="active(17,13)"></li>
+        <li id="t17h14" onclick="active(17,14)"></li>
+        <li id="t17h15" onclick="active(17,15)"></li>
+        <li id="t17h16" onclick="active(17,16)"></li>
+        <li id="t17h17" onclick="active(17,17)"></li>
+        <li id="t17h18" onclick="active(17,18)"></li>
+        <li id="t17h19" onclick="active(17,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t18h1" onclick="active(18,1)"></li>
+        <li id="t18h2" onclick="active(18,2)"></li>
+        <li id="t18h3" onclick="active(18,3)"></li>
+        <li id="t18h4" onclick="active(18,4)"></li>
+        <li id="t18h5" onclick="active(18,5)"></li>
+        <li id="t18h6" onclick="active(18,6)"></li>
+        <li id="t18h7" onclick="active(18,7)"></li>
+        <li id="t18h8" onclick="active(18,8)"></li>
+        <li id="t18h9" onclick="active(18,9)"></li>
+        <li id="t18h10" onclick="active(18,10)"></li>
+        <li id="t18h11" onclick="active(18,11)"></li>
+        <li id="t18h12" onclick="active(18,12)"></li>
+        <li id="t18h13" onclick="active(18,13)"></li>
+        <li id="t18h14" onclick="active(18,14)"></li>
+        <li id="t18h15" onclick="active(18,15)"></li>
+        <li id="t18h16" onclick="active(18,16)"></li>
+        <li id="t18h17" onclick="active(18,17)"></li>
+        <li id="t18h18" onclick="active(18,18)"></li>
+        <li id="t18h19" onclick="active(18,19)"></li>
+	</ul>
+    <ul>
+    	<li id="t19h1" onclick="active(19,1)"></li>
+        <li id="t19h2" onclick="active(19,2)"></li>
+        <li id="t19h3" onclick="active(19,3)"></li>
+        <li id="t19h4" onclick="active(19,4)"></li>
+        <li id="t19h5" onclick="active(19,5)"></li>
+        <li id="t19h6" onclick="active(19,6)"></li>
+        <li id="t19h7" onclick="active(19,7)"></li>
+        <li id="t19h8" onclick="active(19,8)"></li>
+        <li id="t19h9" onclick="active(19,9)"></li>
+        <li id="t19h10" onclick="active(19,10)"></li>
+        <li id="t19h11" onclick="active(19,11)"></li>
+        <li id="t19h12" onclick="active(19,12)"></li>
+        <li id="t19h13" onclick="active(19,13)"></li>
+        <li id="t19h14" onclick="active(19,14)"></li>
+        <li id="t19h15" onclick="active(19,15)"></li>
+        <li id="t19h16" onclick="active(19,16)"></li>
+        <li id="t19h17" onclick="active(19,17)"></li>
+        <li id="t19h18" onclick="active(19,18)"></li>
+        <li id="t19h19" onclick="active(19,19)"></li>
+	</ul>
+</div>
+</body>
+</html>

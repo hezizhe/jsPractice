@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lv.dao.round.RoundMapper">
+	<resultMap type="round" id="roundMap">
+		<id property="id" column="id"/>
+		<result property="peaceSteps" column="peaceSteps"/>
+		<result property="winner" column="winner"/>
+		<result property="first" column="first"/>
+		<result property="steps" column="steps"/>
+		<result property="status" column="status"/>
+		<collection property="players" ofType="player">
+			<id property="id" column="p_id"/>
+			<id property="camp" column="camp"/>
+			<id property="playerName" column="playerName"/>
+			<id property="overTimes" column="overTimes"/>
+		</collection>
+	</resultMap>
+
+	<select id="getAllRounds" resultMap="roundMap">
+		select p.id as p_id,r.* from round r left outer join player p on p.round = r.id
+	</select>
+	
+	<select id="getRound" parameterType="round" resultMap="roundMap">
+		select p.id as p_id, p.camp, p.playerName, p.overTimes, r.* from round r left outer join player p on p.round = r.id
+		<where>
+			<if test="id !=null">
+				and r.id = #{id}
+			</if>
+		</where> 
+	</select>
+	
+	<update id="updateRound" parameterType="round">
+		update round 
+		<set>
+			<if test="first !=null"> first = #{first}, </if>
+			<if test="winner !=null"> winner = #{winner}, </if>
+			<if test="status !=null"> status = #{status}, </if>
+			<if test="steps !=null"> steps = #{steps}, </if>
+			<if test="peaceSteps !=null"> peaceSteps = #{peaceSteps}, </if>
+		</set>
+		where id = #{id};
+	</update>
+	
+</mapper>
